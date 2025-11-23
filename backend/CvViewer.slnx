@@ -1,3 +1,21 @@
 <Solution>
+  <Folder Name="/test/">
+    <Project Path="test/Domain.Tests/Domain.Tests.csproj" />
+    <Project Path="test/Types.Tests/Types.Tests.csproj" />
+  </Folder>
+  <Folder Name="/_SolutionItems/">
+    <File Path=".editorconfig" />
+    <File Path="Directory.Packages.props" />
+  </Folder>
+  <Folder Name="/_SolutionItems/BuildProps/">
+    <File Path="Main.Directory.Build.props" />
+    <File Path="src/Directory.Build.props" />
+    <File Path="Test.Directory.Build.props" />
+    <File Path="test/Directory.Build.props" />
+  </Folder>
+  <Project Path="src/Api/Api.csproj" Id="f8bf525b-5677-4eeb-9c8d-d520388fe59d" />
+  <Project Path="src/DataAccess/DataAccess.csproj" Id="e4a89022-07f6-4601-a873-2451ffc830ac" />
   <Project Path="src/Domain/Domain.csproj" Id="0a03a955-e65e-45ae-82c4-3449860a9d36" />
+  <Project Path="src/Shared/Shared.csproj" Id="717880f7-923c-44a9-a4f2-26ede76a0191" />
+  <Project Path="src/Types/Types.csproj" Id="c4e415f7-cbd4-4bab-a0bd-69c0c111df1b" />
 </Solution>

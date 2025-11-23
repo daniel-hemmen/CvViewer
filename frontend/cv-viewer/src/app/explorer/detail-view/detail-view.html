@@ -1,0 +1,156 @@
+<div class="details-panel">
+  @if (details) {
+  <div class="cv-details">
+    <div class="cv-header">
+      <div class="cv-header-title">
+        <h2>{{ details.name }}</h2>
+        <p class="cv-title">{{ getPrimaryTitle(details) }}</p>
+      </div>
+    </div>
+
+    <div class="cv-contact">
+      <p><mat-icon>email</mat-icon> {{ details.email }}</p>
+      <p><mat-icon>phone</mat-icon> {{ details.phone }}</p>
+      <p><mat-icon>location_on</mat-icon> {{ details.location }}</p>
+    </div>
+
+    <button
+      class="favorite-floating"
+      mat-icon-button
+      aria-label="Toggle favorite"
+      (click)="onToggleFavorite(details.id, $event)"
+    >
+      <mat-icon
+        color="warn"
+        >{{ isFavoriteById?.(details.id) ? 'favorite' : 'favorite_border' }}</mat-icon
+      >
+    </button>
+
+    <mat-divider></mat-divider>
+
+    <div class="cv-section">
+      <h3>Korte beschrijving</h3>
+      <p>{{ details.summary }}</p>
+    </div>
+
+    <div class="cv-section">
+      <h3>Ervaring</h3>
+
+      <table mat-table [dataSource]="dataSource" multiTemplateDataRows class="mat-elevation-z8">
+        @for (column of columnsToDisplay; track column) {
+        <ng-container matColumnDef="{{ column }}">
+          <th mat-header-cell *matHeaderCellDef>{{ column }}</th>
+          <td mat-cell *matCellDef="let experienceItem">
+            {{ getPropertyByColumn(experienceItem, column) }}
+          </td>
+        </ng-container>
+        }
+        <ng-container matColumnDef="expand">
+          <th mat-header-cell *matHeaderCellDef aria-label="row actions">&nbsp;</th>
+          <td mat-cell *matCellDef="let experienceItem">
+            <button
+              mat-icon-button
+              aria-label="expand row"
+              (click)="toggle(experienceItem); $event.stopPropagation()"
+              class="toggle-button"
+              [class.toggle-button-expanded]="isExpanded(experienceItem)"
+            >
+              <mat-icon>{{ isExpanded(experienceItem) ? 'expand_less' : 'expand_more' }}</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="expandedDetail">
+          <td
+            mat-cell
+            *matCellDef="let experienceItem"
+            [attr.colspan]="columnsToDisplayWithExpand.length"
+          >
+            <div
+              class="experience-item-detail-wrapper"
+              [class.experience-item-detail-wrapper-expanded]="isExpanded(experienceItem)"
+            >
+              <div class="experience-item-detail">
+                <div class="experience-item-description">
+                  {{ experienceItem.description }}
+                </div>
+              </div>
+            </div>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="columnsToDisplayWithExpand"></tr>
+        <tr
+          mat-row
+          *matRowDef="let element; columns: columnsToDisplayWithExpand"
+          class="example-element-row"
+          [class.example-expanded-row]="isExpanded(element)"
+          (click)="toggle(element)"
+        ></tr>
+        <tr
+          mat-row
+          *matRowDef="let row; columns: ['expandedDetail']"
+          class="example-detail-row"
+        ></tr>
+      </table>
+    </div>
+
+    <div class="cv-section">
+      <h3>Vaardigheden</h3>
+      <ul class="skills-list">
+        @for (skill of getSkills(details); track formatSkillLabel(skill)) {
+        <li class="skill-item">
+          <div class="skill-name">{{ formatSkillLabel(skill) }}</div>
+          <div class="skill-dots">
+            @for (dot of skillDotStates(skill.level); track dot) {
+            <span class="dot" [class.filled]="dot"></span>
+            }
+          </div>
+        </li>
+        }
+      </ul>
+    </div>
+
+    <div class="cv-section">
+      <h3>Opleiding</h3>
+      @for (edu of getEducation(details); track edu.institution) {
+      <div class="education-item">
+        <p class="education-degree">{{ edu.degree }}</p>
+        <p class="education-institution">{{ edu.institution }} • {{ formatEducationYear(edu) }}</p>
+      </div>
+      }
+    </div>
+
+    <div class="cv-section" *ngIf="getCertifications(details).length">
+      <h3>Certificaten</h3>
+      @for (cert of getCertifications(details); track cert.name) {
+      <div class="cert-item">
+        <p class="cert-name">{{ cert.name }}</p>
+        <p class="cert-meta">{{ cert.issuer }} • {{ formatCertificationDate(cert) }}</p>
+      </div>
+      }
+    </div>
+
+    <div class="cv-section">
+      <h3>Talen</h3>
+      <div class="languages-list">
+        @for (lang of getLanguages(details); track lang.name) {
+        <div class="language-item">
+          <p class="language-name">{{ lang.name }}</p>
+          <p class="language-proficiency">{{ lang.proficiency }}</p>
+        </div>
+        }
+      </div>
+    </div>
+
+    <mat-divider></mat-divider>
+
+    <p class="last-updated">Last updated: {{ details.lastUpdated }}</p>
+  </div>
+  } @else {
+  <div class="no-selection">
+    <mat-icon>info</mat-icon>
+    <p>Selecteer een CV om details te bekijken</p>
+  </div>
+  }
+</div>

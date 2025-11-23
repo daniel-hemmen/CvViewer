@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "identityapp1": {
+      "connectionInfo": "App registration: CvViewer, Tenant: Daniel Hemmen Dev (danielhemmen.dev - Microsoft Entra ID)",
+      "type": "identityapp.default"
+    }
+  }
+}
