@@ -1,0 +1,339 @@
+.explorer-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.explorer-header {
+  margin-bottom: 24px;
+
+  h2 {
+    margin: 0 0 8px 0;
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: var(--mat-sys-on-surface);
+  }
+
+  p {
+    margin: 0;
+    color: var(--mat-sys-on-surface-variant);
+    font-size: 0.875rem;
+  }
+}
+
+.explorer-content {
+  display: flex;
+  gap: 24px;
+  flex: 1;
+  min-height: 0;
+}
+
+.tree-panel {
+  flex: 0 0 350px;
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: 8px;
+  background-color: var(--mat-sys-surface);
+  overflow: auto;
+  padding: 8px;
+}
+
+.cv-tree {
+  background: transparent;
+  width: 100%;
+
+  mat-tree-node,
+  mat-nested-tree-node {
+    display: block;
+
+    .tree-node-row {
+      min-height: 40px;
+      display: flex;
+      align-items: center;
+      padding: 4px 0;
+      padding-left: 0;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: background-color 0.2s;
+
+      &:hover {
+        background-color: var(--mat-sys-surface-container-highest);
+      }
+
+      button {
+        margin-right: 4px;
+        flex-shrink: 0;
+
+        mat-icon {
+          font-size: 18px;
+          width: 18px;
+          height: 18px;
+        }
+      }
+
+      .tree-icon {
+        margin-right: 8px;
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+        color: var(--mat-sys-on-surface-variant);
+        flex-shrink: 0;
+      }
+
+      .toggle-spacer {
+        display: inline-block;
+        width: 40px;
+        height: 40px;
+        margin-right: 4px;
+        flex-shrink: 0;
+        vertical-align: middle;
+      }
+
+      .folder-empty {
+        margin-left: 6px;
+        color: var(--mat-sys-on-surface-variant);
+        font-size: 0.85rem;
+      }
+
+      .tree-node-label {
+        flex: 1;
+        color: var(--mat-sys-on-surface);
+        font-size: 0.875rem;
+        user-select: none;
+
+        &.file-node {
+          font-weight: 500;
+        }
+      }
+    }
+  }
+
+  mat-nested-tree-node > div:last-child {
+    padding-left: 24px;
+  }
+
+  .tree-invisible {
+    display: none;
+  }
+}
+
+.details-panel {
+  flex: 1;
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: 8px;
+  background-color: var(--mat-sys-surface);
+  padding: 24px;
+  overflow: auto;
+
+  .cv-details {
+    .cv-header {
+      margin-bottom: 24px;
+
+      h2 {
+        margin: 0 0 8px 0;
+        font-size: 1.75rem;
+        font-weight: 500;
+        color: var(--mat-sys-on-surface);
+      }
+
+      .cv-title {
+        margin: 0;
+        font-size: 1.125rem;
+        color: var(--mat-sys-primary);
+        font-weight: 500;
+      }
+    }
+
+    .cv-contact {
+      margin-bottom: 24px;
+
+      p {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin: 8px 0;
+        color: var(--mat-sys-on-surface-variant);
+        font-size: 0.875rem;
+
+        mat-icon {
+          font-size: 18px;
+          width: 18px;
+          height: 18px;
+          color: var(--mat-sys-primary);
+        }
+      }
+    }
+
+    mat-divider {
+      margin: 24px 0;
+    }
+
+    .cv-section {
+      margin-bottom: 32px;
+
+      h3 {
+        margin: 0 0 16px 0;
+        font-size: 1.25rem;
+        font-weight: 500;
+        color: var(--mat-sys-on-surface);
+      }
+
+      p {
+        margin: 8px 0;
+        color: var(--mat-sys-on-surface-variant);
+        line-height: 1.6;
+      }
+
+      .experience-card {
+        margin-bottom: 16px;
+      }
+    }
+
+    mat-accordion {
+      display: block;
+    }
+
+    mat-expansion-panel {
+      margin-bottom: 16px;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    mat-expansion-panel:last-child {
+      margin-bottom: 0;
+    }
+
+    mat-expansion-panel-header {
+      padding: 12px 16px;
+    }
+
+    .skills-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .skills-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .skill-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .skill-name {
+      flex: 0 0 220px;
+      color: var(--mat-sys-on-surface);
+      font-weight: 500;
+    }
+
+    .skill-dots {
+      display: inline-flex;
+      gap: 6px;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background-color: var(--mat-sys-outline-variant);
+      display: inline-block;
+    }
+
+    .dot.filled {
+      background-color: var(--mat-sys-primary);
+    }
+
+    .education-item {
+      margin-bottom: 16px;
+
+      .education-degree {
+        margin: 0 0 4px 0;
+        font-weight: 500;
+        color: var(--mat-sys-on-surface);
+      }
+
+      .education-institution {
+        margin: 0;
+        font-size: 0.875rem;
+        color: var(--mat-sys-on-surface-variant);
+      }
+    }
+
+    .cert-item,
+    .language-item {
+      margin-bottom: 16px;
+
+      .cert-name,
+      .language-name {
+        margin: 0 0 4px 0;
+        font-weight: 500;
+        color: var(--mat-sys-on-surface);
+      }
+
+      .cert-meta,
+      .language-proficiency {
+        margin: 0;
+        font-size: 0.875rem;
+        color: var(--mat-sys-on-surface-variant);
+      }
+    }
+
+    .languages-list {
+      p {
+        margin: 8px 0;
+      }
+    }
+  }
+
+  .last-updated {
+    margin-top: 24px;
+    font-size: 0.75rem;
+    color: var(--mat-sys-on-surface-variant);
+    font-style: italic;
+    text-align: right;
+  }
+}
+
+.no-selection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: var(--mat-sys-on-surface-variant);
+
+  mat-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+    margin-bottom: 16px;
+    opacity: 0.5;
+  }
+
+  p {
+    margin: 0;
+    font-size: 0.875rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .explorer-content {
+    flex-direction: column;
+  }
+
+  .tree-panel {
+    flex: 1;
+    min-height: 300px;
+  }
+
+  .details-panel {
+    min-height: 200px;
+  }
+}
