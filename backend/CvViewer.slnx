@@ -14,6 +14,7 @@
     <File Path="test/Directory.Build.props" />
   </Folder>
   <Project Path="src/Api/Api.csproj" Id="f8bf525b-5677-4eeb-9c8d-d520388fe59d" />
+  <Project Path="src/ApplicationServices/ApplicationServices.csproj" Id="10359026-dfc0-4531-bf20-6e01c06285cb" />
   <Project Path="src/DataAccess/DataAccess.csproj" Id="e4a89022-07f6-4601-a873-2451ffc830ac" />
   <Project Path="src/Domain/Domain.csproj" Id="0a03a955-e65e-45ae-82c4-3449860a9d36" />
   <Project Path="src/Shared/Shared.csproj" Id="717880f7-923c-44a9-a4f2-26ede76a0191" />

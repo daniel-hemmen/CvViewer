@@ -1,10 +1,15 @@
-﻿namespace CvViewer.Domain;
+﻿
+namespace CvViewer.Domain;
 
-public record CV
+public sealed record Cv
 {
-    public Guid Id { get; init; }
-    public required string Title { get; init; }
-    public required string Blurb { get; init; }
-    public required Author Author { get; init; }
-    public List<JobExperience> JobExperiences { get; init; } = [];
+    public required Auteur Auteur { get; init; }
+    public Contactgegevens? Contactgegevens { get; init; }
+    public Adres? Adres { get; init; }
+    public string? Inleiding { get; init; }
+    public List<WerkervaringInstance> WerkervaringInstances { get; init; } = [];
+    public List<OpleidingInstance> OpleidingInstances { get; init; } = [];
+    public List<CertificaatInstance> CertificaatInstances { get; init; } = [];
+    public List<VaardigheidInstance> VaardigheidInstances { get; init; } = [];
+    public CvMetadata? Metadata { get; set; }
 }
