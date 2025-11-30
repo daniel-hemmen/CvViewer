@@ -1,10 +1,13 @@
 ﻿using CvViewer.Domain;
+using NodaTime;
 
-namespace CvViewer.ApplicationServices
+namespace CvViewer.ApplicationServices;
+
+public interface ICvRepository
 {
-    public interface ICvRepository
-    {
-        Task<bool> CreateCvAsync(Cv cv, CancellationToken cancellationToken);
-        public Task<int> GetFavoritedCvCountAsync(CancellationToken cancellationToken);
-    }
+    Task<bool> AddCvAsync(Cv cv, CancellationToken cancellationToken);
+    Task<bool> AddCvsAsync(CancellationToken cancellationToken, params Cv[] cvs);
+    public Task<int?> GetFavoritedCvCountAsync(CancellationToken cancellationToken);
+    public Task<Cv?> GetLastUpdatedCvAsync(CancellationToken cancellationToken);
+    public Task<List<Cv>?> GetCvsUpdatedSinceAsync(Instant since, CancellationToken cancellationToken);
 }

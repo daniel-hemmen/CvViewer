@@ -6,11 +6,13 @@ namespace CvViewer.DataAccess.Extensions;
 
 public static class ServiceCollectionExtensions
 {
+    private const string InMemoryDatabaseName = "CvViewerDb";
+
     public static IServiceCollection AddDataAccessServices(this IServiceCollection services)
     {
         services.AddDbContext<CvContext>(options =>
         {
-            options.UseInMemoryDatabase(Guid.NewGuid().ToString());
+            options.UseInMemoryDatabase(InMemoryDatabaseName);
         });
 
         services.AddScoped<ICvRepository, CvRepository>();

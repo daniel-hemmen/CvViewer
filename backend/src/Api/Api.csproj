@@ -7,7 +7,7 @@
     <UserSecretsId>aspnet-Api-27d16338-cb2f-41fd-9c90-87e97ccd7308</UserSecretsId>
   </PropertyGroup>
 
-  <ItemGroup>
+<ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" NoWarn="NU1605" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" NoWarn="NU1605" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" />

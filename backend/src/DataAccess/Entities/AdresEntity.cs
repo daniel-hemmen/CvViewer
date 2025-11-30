@@ -1,5 +1,6 @@
 ﻿namespace CvViewer.DataAccess.Entities;
 
+
 public class AdresEntity
 {
     public required string Straat { get; set; }

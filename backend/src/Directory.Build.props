@@ -1,3 +1,6 @@
 <Project>
 	<Import Project="$([MSBuild]::GetPathOfFileAbove('Main.Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" Condition="'' != $([MSBuild]::GetPathOfFileAbove('Main.Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" />
+	<ItemGroup>
+		<PackageReference Include="NodaTime" />
+	</ItemGroup>
 </Project>

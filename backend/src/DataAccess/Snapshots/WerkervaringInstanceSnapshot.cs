@@ -5,9 +5,10 @@ namespace CvViewer.DataAccess.Snapshots;
 
 public class WerkervaringInstanceSnapshot
 {
-    public string? Title { get; set; }
-    public string? CompanyName { get; set; }
-    public DateOnly? StartDate { get; set; }
-    public DateOnly? EndDate { get; set; }
-    public string? Description { get; set; }
+    public required string Bedrijfsnaam { get; init; }
+    public required string Functietitel { get; init; }
+    public DateOnly Startdatum { get; init; }
+    public DateOnly? Einddatum { get; init; }
+    public string? Locatie { get; init; }
+    public string? Beschrijving { get; init; }
 }

@@ -1,10 +1,12 @@
 ﻿using CvViewer.DataAccess.Snapshots;
+using NodaTime;
 
 namespace CvViewer.DataAccess.Entities;
 
 public class CvEntity
 {
     public int Id { get; set; }
+    public Guid ExternalId { get; set; }
 
     public long AuteurId { get; set; }
     public required AuteurEntity Auteur { get; set; }
@@ -19,5 +21,5 @@ public class CvEntity
 
     public string? Inleiding { get; set; }
     public bool IsFavorite { get; set; }
-    public DateTime? LastUpdated { get; set; }
+    public Instant LastUpdated { get; set; }
 }

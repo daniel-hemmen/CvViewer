@@ -1,8 +1,7 @@
-using System.Text.Json;
+using CvViewer.DataAccess.Converters;
 using CvViewer.DataAccess.Entities;
 using CvViewer.DataAccess.Snapshots;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace CvViewer.DataAccess.Configurations;
@@ -33,28 +32,31 @@ public class CvEntityConfiguration : IEntityTypeConfiguration<CvEntity>
             ab.Property(p => p.Land).HasMaxLength(100);
         });
 
-        builder.HasMany(c => c.WerkervaringInstances).WithOne().HasForeignKey("CvId");
-        builder.HasMany(c => c.OpleidingInstances).WithOne().HasForeignKey("CvId");
-        builder.HasMany(c => c.CertificaatInstances).WithOne().HasForeignKey("CvId").;
-
-        var serializerOptions = new JsonSerializerOptions
+        builder.OwnsMany(c => c.WerkervaringInstances, wb =>
         {
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
-        };
+            wb.WithOwner().HasForeignKey("CvId");
+            wb.Property<int>("Id");
+            wb.HasKey("Id");
+        });
+
+        builder.OwnsMany(c => c.OpleidingInstances, ob =>
+        {
+            ob.WithOwner().HasForeignKey("CvId");
+            ob.Property<int>("Id");
+            ob.HasKey("Id");
+        });
+
+        builder.OwnsMany(c => c.CertificaatInstances, cb =>
+        {
+            cb.WithOwner().HasForeignKey("CvId");
+            cb.Property<int>("Id");
+            cb.HasKey("Id");
+        });
 
         PropertyBuilder<List<VaardigheidInstanceSnapshot>> vaardigheidProperty = builder.Property(c => c.VaardigheidInstances)
-            .HasConversion(
-                v => JsonSerializer.Serialize(v, serializerOptions),
-                v => JsonSerializer.Deserialize<List<VaardigheidInstanceSnapshot>>(v, serializerOptions) ?? new());
+            .HasConversion(VaardigheidInstanceConverter.Converter);
 
-        var valueComparer = new ValueComparer<List<VaardigheidInstanceSnapshot>>(
-            equalsExpression: (l1, l2) => JsonSerializer.Serialize(l1, serializerOptions) == JsonSerializer.Serialize(l2, serializerOptions),
-            hashCodeExpression: l => l == null ? 0 : JsonSerializer.Serialize(l, serializerOptions).GetHashCode(),
-            snapshotExpression: l => JsonSerializer.Deserialize<List<VaardigheidInstanceSnapshot>>(JsonSerializer.Serialize(l, serializerOptions), serializerOptions) ?? new()
-        );
-
-        vaardigheidProperty.Metadata.SetValueComparer(valueComparer);
+        vaardigheidProperty.Metadata.SetValueComparer(VaardigheidInstanceConverter.ValueComparer);
 
         builder.Property(c => c.Inleiding).HasMaxLength(2000);
     }

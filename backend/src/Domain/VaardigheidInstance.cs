@@ -1,8 +1,7 @@
-﻿namespace CvViewer.Domain
+﻿namespace CvViewer.Domain;
+
+public sealed record VaardigheidInstance
 {
-    public class VaardigheidInstance
-    {
-        public required string Naam { get; init; }
-        public required byte Niveau { get; init; }
-    }
+    public required string Naam { get; init; }
+    public required byte Niveau { get; init; }
 }

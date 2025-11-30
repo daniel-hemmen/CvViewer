@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using CvViewer.DataAccess.Configurations;
 using CvViewer.DataAccess.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,12 +13,12 @@ public class CvContext(DbContextOptions<CvContext> options) : DbContext(options)
         DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
     };
 
-    public DbSet<AuteurEntity> Authors { get; set; }
-    public DbSet<CvEntity> Cvs { get; set; }
-    public DbSet<WerkervaringInstanceEntity> JobExperiences { get; set; }
-    public DbSet<OpleidingInstanceEntity> Educations { get; set; }
-    public DbSet<CertificaatInstanceEntity> Certificates { get; set; }
+    public DbSet<AuteurEntity> Auteurs { get; set; } = null!;
+    public DbSet<CvEntity> Cvs { get; set; } = null!;
+    public DbSet<WerkervaringInstanceEntity> WerkervaringInstances { get; set; } = null!;
+    public DbSet<OpleidingInstanceEntity> OpleidingInstances { get; set; } = null!;
+    public DbSet<CertificaatInstanceEntity> CertificaatInstances { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
-        => modelBuilder.ApplyConfigurationsFromAssembly(typeof(CvContext).Assembly);
+        => modelBuilder.ApplyConfigurationsFromAssembly(typeof(CvEntityConfiguration).Assembly);
 }

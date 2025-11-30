@@ -1,8 +1,10 @@
-﻿
+﻿using NodaTime;
+
 namespace CvViewer.Domain;
 
 public sealed record Cv
 {
+    public required Guid Id { get; init; }
     public required Auteur Auteur { get; init; }
     public Contactgegevens? Contactgegevens { get; init; }
     public Adres? Adres { get; init; }
@@ -11,5 +13,6 @@ public sealed record Cv
     public List<OpleidingInstance> OpleidingInstances { get; init; } = [];
     public List<CertificaatInstance> CertificaatInstances { get; init; } = [];
     public List<VaardigheidInstance> VaardigheidInstances { get; init; } = [];
-    public CvMetadata? Metadata { get; set; }
+    public bool IsFavorited { get; set; } = false;
+    public required Instant LastUpdated { get; set; }
 }
