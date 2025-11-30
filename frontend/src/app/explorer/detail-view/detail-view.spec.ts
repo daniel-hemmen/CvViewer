@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { provideZonelessChangeDetection } from '@angular/core';
 import { DetailView } from './detail-view';
 
 describe('DetailView', () => {
@@ -8,13 +8,12 @@ describe('DetailView', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [DetailView]
-    })
-    .compileComponents();
+      imports: [DetailView],
+      providers: [provideZonelessChangeDetection()],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(DetailView);
     component = fixture.componentInstance;
-    fixture.detectChanges();
   });
 
   it('should create', () => {
