@@ -2,7 +2,7 @@ name: Build and deploy .NET Core application to Web App cv-viewer-api
 on:
   push:
     branches:
-    - main
+    - dev
 permissions:
   id-token: write
   contents: read
@@ -46,9 +46,9 @@ jobs:
     - name: Azure Login
       uses: azure/login@v2
       with:
-        client-id: ${{ vars.cv_viewer_api_CLIENT_ID_D822 }}
-        tenant-id: ${{ vars.cv_viewer_api_TENANT_ID_33FD }}
-        subscription-id: ${{ vars.cv_viewer_api_SUBSCRIPTION_ID_33FD }}
+        client-id: ${{ vars.cv_viewer_api_CLIENT_ID_8785 }}
+        tenant-id: ${{ vars.cv_viewer_api_TENANT_ID_8785 }}
+        subscription-id: ${{ vars.cv_viewer_api_SUBSCRIPTION_ID_8785 }}
     - name: Deploy to Azure WebApp
       uses: azure/webapps-deploy@v2
       with:
