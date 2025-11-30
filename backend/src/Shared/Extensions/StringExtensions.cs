@@ -6,7 +6,7 @@ public static class StringExtensions
 {
     public static string Capitalize(this string input)
     {
-        ArgumentException.ThrowIfNullOrEmpty(input);
+        ArgumentException.ThrowIfNullOrWhiteSpace(input);
 
         return RegexHelpers
             .HasLeadingLowercaseLetter()

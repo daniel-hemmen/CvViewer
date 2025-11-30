@@ -18,7 +18,7 @@ public sealed class SynchronizedDateTimeTests
 
         // Assert
         sut.Local.ShouldBe(dateTime.ToLocalTime());
-        sut.Utc.ShouldBe(dateTime);
+        sut.Utc.ShouldBe(dateTime.ToUniversalTime());
     }
 
     [TestMethod]

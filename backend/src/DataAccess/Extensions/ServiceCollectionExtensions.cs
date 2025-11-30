@@ -1,19 +1,22 @@
-﻿using CvViewer.DataAccess;
+﻿using CvViewer.ApplicationServices;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace CvViewer.DataAccess.Extensions
-{
-    public static class ServiceCollectionExtensions
-    {
-        public static IServiceCollection AddDataAccessServices(this IServiceCollection services)
-        {
-            services.AddDbContext<CvContext>(options =>
-            {
-                options.UseInMemoryDatabase(Guid.NewGuid().ToString());
-            });
+namespace CvViewer.DataAccess.Extensions;
 
-            return services;
-        }
+public static class ServiceCollectionExtensions
+{
+    private const string InMemoryDatabaseName = "CvViewerDb";
+
+    public static IServiceCollection AddDataAccessServices(this IServiceCollection services)
+    {
+        services.AddDbContext<CvContext>(options =>
+        {
+            options.UseInMemoryDatabase(InMemoryDatabaseName);
+        });
+
+        services.AddScoped<ICvRepository, CvRepository>();
+
+        return services;
     }
 }
