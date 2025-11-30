@@ -6,7 +6,7 @@ namespace CvViewer.ComponentTests
     {
         private readonly HttpClient _httpClient;
 
-        private readonly struct Paths
+        private readonly struct Routes
         {
             public const string FavoritedCount = "/api/cvs/count/favorited";
         }
@@ -17,6 +17,6 @@ namespace CvViewer.ComponentTests
         }
 
         public async Task<int> GetFavoritedCountAsync(CancellationToken cancellationToken)
-            => await _httpClient.GetFromJsonAsync<int>(Paths.FavoritedCount, cancellationToken);
+            => await _httpClient.GetFromJsonAsync<int>(Routes.FavoritedCount, cancellationToken);
     }
 }

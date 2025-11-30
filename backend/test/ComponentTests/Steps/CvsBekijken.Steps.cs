@@ -23,9 +23,9 @@ public partial class CvsOpvragenSteps
     }
 
     [Given("er zijn {int} CVs waarvan er {int} als favoriet zijn aangemerkt")]
-    public async Task GivenErZijnCvsWaarvanErAlsFavorietZijnAangemerkt(int totalCvCount, int favoritedCount)
+    public async Task GivenErZijnCvsWaarvanErAlsFavorietZijnAangemerkt(int totalCount, int favoritedCount)
     {
-        var notFavoritedCount = totalCvCount - favoritedCount;
+        var notFavoritedCount = totalCount - favoritedCount;
 
         await CvPreparator.PrepareCvsAsync(notFavoritedCount, _cancellationToken);
         await CvPreparator.PrepareFavoritedCvsAsync(favoritedCount, _cancellationToken);
