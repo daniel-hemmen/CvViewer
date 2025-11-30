@@ -25,24 +25,24 @@ export class Dashboard {
   favorites: number | null = null;
   views: number | null = null;
 
-  ngOnInit(): void {
-    this.loadSummary();
-  }
-  loadSummary(): void {
-    this.http.get<DashboardSummary>('/api/dashboard/summary').subscribe({
-      next: (s) => {
-        this.totalCVs = s.totalCVs ?? 0;
-        this.recentlyUpdated = s.recentlyUpdated ?? 0;
-        this.favorites = s.favorites ?? 0;
-        this.views = s.views ?? 0;
-      },
-      error: (err) => {
-        console.error('Failed to load dashboard summary', err);
-        this.totalCVs = this.totalCVs ?? 0;
-        this.recentlyUpdated = this.recentlyUpdated ?? 0;
-        this.favorites = this.favorites ?? 0;
-        this.views = this.views ?? 0;
-      },
-    });
-  }
+  // ngOnInit(): void {
+  //   this.loadSummary();
+  // }
+  // loadSummary(): void {
+  //   this.http.get<DashboardSummary>('/api/dashboard/summary').subscribe({
+  //     next: (s) => {
+  //       this.totalCVs = s.totalCVs ?? 0;
+  //       this.recentlyUpdated = s.recentlyUpdated ?? 0;
+  //       this.favorites = s.favorites ?? 0;
+  //       this.views = s.views ?? 0;
+  //     },
+  //     error: (err) => {
+  //       console.error('Failed to load dashboard summary', err);
+  //       this.totalCVs = this.totalCVs ?? 0;
+  //       this.recentlyUpdated = this.recentlyUpdated ?? 0;
+  //       this.favorites = this.favorites ?? 0;
+  //       this.views = this.views ?? 0;
+  //     },
+  //   });
+  // }
 }
