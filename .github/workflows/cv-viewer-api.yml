@@ -8,10 +8,10 @@ permissions:
   contents: read
 env:
   AZURE_WEBAPP_NAME: cv-viewer-api
-  AZURE_WEBAPP_PACKAGE_PATH: src/Api/publish
+  AZURE_WEBAPP_PACKAGE_PATH: backend/src/Api/publish
   CONFIGURATION: Release
   DOTNET_CORE_VERSION: 10.0.x
-  WORKING_DIRECTORY: src/Api
+  WORKING_DIRECTORY: backend/src/Api
 jobs:
   build:
     runs-on: ubuntu-latest
