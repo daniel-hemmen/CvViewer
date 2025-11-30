@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { provideZonelessChangeDetection } from '@angular/core';
+import { provideHttpClient } from '@angular/common/http';
 import { Explorer } from './explorer';
 
 describe('Explorer', () => {
@@ -8,13 +9,12 @@ describe('Explorer', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [Explorer]
-    })
-    .compileComponents();
+      imports: [Explorer],
+      providers: [provideZonelessChangeDetection(), provideHttpClient()],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(Explorer);
     component = fixture.componentInstance;
-    fixture.detectChanges();
   });
 
   it('should create', () => {
