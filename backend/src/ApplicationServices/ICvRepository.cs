@@ -12,4 +12,6 @@ public interface ICvRepository
     public Task<int?> GetTotalCvCountAsync(CancellationToken cancellationToken);
     public Task<List<Cv>?> GetCvsUpdatedSinceAsync(Instant since, CancellationToken cancellationToken);
     public Task<List<Cv>?> GetAllCvsAsync(CancellationToken cancellationToken);
+    public Task<Cv?> GetCvByIdAsync(Guid cvExternalId, CancellationToken cancellationToken);
+    public Task<bool?> ToggleCvIsFavoritedAsync(Guid externalId, CancellationToken cancellationToken);
 }

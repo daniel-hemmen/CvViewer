@@ -13,6 +13,16 @@ public sealed class CvPreparator
         _cvRepository = cvRepository;
     }
 
+    public async Task<Guid> PrepareCvAsync(CancellationToken cancellationToken)
+    {
+        var cv = CvBuilder.CreateDefault().Build();
+
+        await _cvRepository.AddCvAsync(cv, cancellationToken);
+
+        return cv.Id;
+    }
+
+
     public async Task PrepareCvsAsync(int count, CancellationToken cancellationToken)
     {
         var cvs = CreateCvs(count, withIsFavorited: false);

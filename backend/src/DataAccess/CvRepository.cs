@@ -50,6 +50,20 @@ public sealed class CvRepository : ICvRepository
         return result?.ToDomain();
     }
 
+    public async Task<bool?> ToggleCvIsFavoritedAsync(Guid externalId, CancellationToken cancellationToken)
+    {
+        var cvEntity = await _cvContext.Set<CvEntity>()
+            .FirstOrDefaultAsync(cv => cv.ExternalId == externalId, cancellationToken);
+
+        if (cvEntity is null)
+            return null;
+
+        cvEntity.IsFavorite = !cvEntity.IsFavorite;
+        await _cvContext.SaveChangesAsync(cancellationToken);
+
+        return cvEntity.IsFavorite;
+    }
+
     public async Task<List<Cv>?> GetCvsUpdatedSinceAsync(Instant since, CancellationToken cancellationToken)
     {
         var result = await _cvContext.Set<CvEntity>()
@@ -67,5 +81,13 @@ public sealed class CvRepository : ICvRepository
             .ToListAsync(cancellationToken);
 
         return result?.Select(cv => cv.ToDomain()).ToList();
+    }
+
+    public async Task<Cv?> GetCvByIdAsync(Guid cvExternalId, CancellationToken cancellationToken)
+    {
+        var result = await _cvContext.Set<CvEntity>()
+            .FirstOrDefaultAsync(cv => cv.ExternalId == cvExternalId, cancellationToken);
+
+        return result?.ToDomain();
     }
 }

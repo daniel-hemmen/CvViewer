@@ -1,4 +1,4 @@
-﻿using CvViewer.ApplicationServices.DTOs;
+﻿using CvViewer.Api.DTOs;
 using CvViewer.Domain;
 using CvViewer.Domain.Extensions;
 
