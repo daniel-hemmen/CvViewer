@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CvViewer.DataAccess.Migrations
 {
     [DbContext(typeof(CvContext))]
-    [Migration("20251201220926_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20251201231206_InitialCreate")]
+    partial class Baseline
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -105,6 +105,12 @@ namespace CvViewer.DataAccess.Migrations
 
                     b.Property<DateTime>("LastUpdated")
                         .HasColumnType("datetime2");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
 
                     b.Property<string>("VaardigheidInstances")
                         .IsRequired()
