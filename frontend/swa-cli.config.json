@@ -1,0 +1,12 @@
+{
+  "$schema": "https://aka.ms/swa-cli/schema",
+  "configurations": {
+    "default": {
+      "appLocation": ".",
+      "outputLocation": "dist/cv-viewer/browser",
+      "apiLocation": null,
+      "devServerUrl": "http://localhost:4200",
+      "routesLocation": "staticwebapp.config.json"
+    }
+  }
+}
