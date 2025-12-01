@@ -2,7 +2,7 @@
   <ItemGroup>
     <PackageVersion Include="EntityFrameworkCore.Sqlite.NodaTime" Version="9.2.1" />
     <PackageVersion Include="FluentValidation" Version="12.1.0" />
-    <PackageVersion Include="MediatR" Version="13.1.0" />
+    <PackageVersion Include="MediatR" Version="12.5.0" />
     <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.0" NoWarn="NU1605" />
     <PackageVersion Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="10.0.0" NoWarn="NU1605" />
     <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="10.0.0" />

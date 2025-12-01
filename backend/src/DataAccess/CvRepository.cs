@@ -35,6 +35,11 @@ public sealed class CvRepository : ICvRepository
             .Set<CvEntity>()
             .CountAsync(cv => cv.IsFavorite, cancellationToken);
 
+    public async Task<int?> GetTotalCvCountAsync(CancellationToken cancellationToken)
+        => await _cvContext
+            .Set<CvEntity>()
+            .CountAsync(cancellationToken);
+
     public async Task<Cv?> GetLastUpdatedCvAsync(CancellationToken cancellationToken)
     {
         var result = await _cvContext.Set<CvEntity>()
@@ -49,6 +54,15 @@ public sealed class CvRepository : ICvRepository
     {
         var result = await _cvContext.Set<CvEntity>()
             .Where(cv => cv.LastUpdated >= since)
+            .Include(c => c.Auteur)
+            .ToListAsync(cancellationToken);
+
+        return result?.Select(cv => cv.ToDomain()).ToList();
+    }
+
+    public async Task<List<Cv>?> GetAllCvsAsync(CancellationToken cancellationToken)
+    {
+        var result = await _cvContext.Set<CvEntity>()
             .Include(c => c.Auteur)
             .ToListAsync(cancellationToken);
 

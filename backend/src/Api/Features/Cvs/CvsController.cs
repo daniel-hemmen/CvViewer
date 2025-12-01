@@ -23,6 +23,12 @@ public class CvsController(IMediator mediator) : BaseController(mediator)
             ? Ok(cvs)
             : NotFound();
 
+    [HttpGet("/api/[controller]/count/total")]
+    public async Task<IActionResult> GetTotalCvCountAsync(CancellationToken cancellationToken)
+        => await GetResponse<GetTotalCvCountRequest, int?>(new(), cancellationToken) is int count
+            ? Ok(count)
+            : NotFound();
+
     [HttpGet("/api/[controller]/all")]
     public async Task<IActionResult> GetAllCvs(CancellationToken cancellationToken)
         => await GetResponse<GetAllCvsRequest, List<Cv>?>(new(), cancellationToken) is List<Cv> cvs
