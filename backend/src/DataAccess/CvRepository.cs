@@ -59,4 +59,13 @@ public sealed class CvRepository : ICvRepository
 
         return result?.Select(cv => cv.ToDomain()).ToList();
     }
+
+    public async Task<List<Cv>?> GetAllCvsAsync(CancellationToken cancellationToken)
+    {
+        var result = await _cvContext.Set<CvEntity>()
+            .Include(c => c.Auteur)
+            .ToListAsync(cancellationToken);
+
+        return result?.Select(cv => cv.ToDomain()).ToList();
+    }
 }

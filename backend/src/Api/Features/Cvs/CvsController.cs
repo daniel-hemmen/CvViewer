@@ -25,7 +25,7 @@ public class CvsController(IMediator mediator) : BaseController(mediator)
 
     [HttpGet("/api/[controller]/count/total")]
     public async Task<IActionResult> GetTotalCvCountAsync(CancellationToken cancellationToken)
-        => await GetResponse<GetFavoritedCvCountRequest, int?>(new(), cancellationToken) is int count
+        => await GetResponse<GetTotalCvCountRequest, int?>(new(), cancellationToken) is int count
             ? Ok(count)
             : NotFound();
 
