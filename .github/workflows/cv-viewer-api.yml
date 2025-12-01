@@ -1,8 +1,11 @@
 name: Build and deploy .NET Core application to Web App cv-viewer-api
 on:
   push:
+    paths:
+    - backend/**
     branches:
     - main
+  workflow_dispatch:
 permissions:
   id-token: write
   contents: read

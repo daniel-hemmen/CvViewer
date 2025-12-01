@@ -1,4 +1,5 @@
 using CvViewer.ApplicationServices.Extensions;
+using CvViewer.DataAccess;
 using CvViewer.DataAccess.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Identity.Web;
@@ -17,11 +18,18 @@ public partial class Program
         builder.Services.AddControllers();
         builder.Services.AddOpenApi();
 
+        var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
         builder.Services
             .AddApplicationServices()
-            .AddDataAccessServices();
+            .AddDataAccessServices(connectionString);
 
         var app = builder.Build();
+
+        if (!app.Environment.IsDevelopment())
+        {
+            EnsureDatabaseCreated(app);
+        }
 
         if (app.Environment.IsDevelopment())
         {
@@ -37,5 +45,14 @@ public partial class Program
         app.MapControllers();
 
         app.Run();
+    }
+
+    private static void EnsureDatabaseCreated(WebApplication? app)
+    {
+        using var scope = app!.Services.CreateScope();
+
+        var context = scope.ServiceProvider.GetRequiredService<CvContext>();
+
+        context.Database.EnsureCreated();
     }
 }

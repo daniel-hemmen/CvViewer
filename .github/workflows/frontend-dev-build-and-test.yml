@@ -8,6 +8,7 @@ on:
     types: [opened, synchronize, reopened, closed]
     branches:
       - dev
+  workflow_dispatch:
 
 jobs:
   validate_build_job:
