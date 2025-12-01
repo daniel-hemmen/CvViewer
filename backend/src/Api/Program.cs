@@ -18,7 +18,7 @@ public partial class Program
         builder.Services.AddControllers();
         builder.Services.AddOpenApi();
 
-        var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+        var connectionString = Environment.GetEnvironmentVariable("AZURE_SQL_CONNECTIONSTRING")!;
 
         builder.Services
             .AddApplicationServices()
