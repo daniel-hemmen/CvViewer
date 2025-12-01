@@ -14,7 +14,11 @@ public static class ServiceCollectionExtensions
         {
             if (!string.IsNullOrWhiteSpace(connectionString))
             {
-                options.UseSqlServer(connectionString, options => options.UseNodaTime());
+                options.UseSqlServer(connectionString, options =>
+                {
+                    options.UseNodaTime();
+                    options.EnableRetryOnFailure();
+                });
             }
             else
             {
