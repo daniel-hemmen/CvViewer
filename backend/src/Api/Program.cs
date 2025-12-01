@@ -34,7 +34,8 @@ public partial class Program
         builder.Services.AddControllers();
         builder.Services.AddOpenApi();
 
-        var connectionString = Environment.GetEnvironmentVariable("AZURE_SQL_CONNECTIONSTRING")!;
+        var connectionString = Environment.GetEnvironmentVariable("AZURE_SQL_CONNECTIONSTRING")
+            ?? builder.Configuration.GetConnectionString("DefaultConnection");
 
         builder.Services
             .AddApplicationServices()
@@ -44,7 +45,7 @@ public partial class Program
 
         if (!app.Environment.IsDevelopment())
         {
-            ApplyMigrationsAsync(app);
+            ApplyMigrations(app);
         }
 
         if (app.Environment.IsDevelopment())
@@ -65,12 +66,12 @@ public partial class Program
         app.Run();
     }
 
-    private static void ApplyMigrationsAsync(WebApplication? app)
+    private static void ApplyMigrations(WebApplication? app)
     {
         using var scope = app!.Services.CreateScope();
 
         var context = scope.ServiceProvider.GetRequiredService<CvContext>();
 
-        context.Database.MigrateAsync();
+        context.Database.Migrate();
     }
 }
