@@ -15,6 +15,21 @@ public partial class Program
         builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"));
 
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy("AllowFrontend", policy =>
+            {
+                policy.WithOrigins(
+                    "http://localhost:4200",
+                    "https://localhost:4200",
+                    "https://zealous-sand-011043103.3.azurestaticapps.net"
+                )
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .AllowCredentials();
+            });
+        });
+
         builder.Services.AddControllers();
         builder.Services.AddOpenApi();
 
@@ -37,6 +52,8 @@ public partial class Program
         }
 
         app.UseHttpsRedirection();
+
+        app.UseCors("AllowFrontend");
 
         app.UseAuthentication();
 
