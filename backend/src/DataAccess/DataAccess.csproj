@@ -4,12 +4,14 @@
   </PropertyGroup>
 	
     <ItemGroup>
-    <PackageReference Include="FluentValidation" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
-    <PackageReference Include="SimplerSoftware.EntityFrameworkCore.SqlServer.NodaTime" />
-  </ItemGroup>
+      <PackageReference Include="FluentValidation" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" />
+      <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+      <PackageReference Include="SimplerSoftware.EntityFrameworkCore.SqlServer.NodaTime" />
+      <PackageReference Include="EntityFrameworkCore.Sqlite.NodaTime" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
+    </ItemGroup>
 	
     <ItemGroup>
       <ProjectReference Include="..\ApplicationServices\ApplicationServices.csproj" />
