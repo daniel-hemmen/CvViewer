@@ -20,6 +20,21 @@ import {
   LanguageItem,
 } from '../models/cv.models';
 import { FavoritesService } from '../services/favorites.service';
+import { environment } from '../../environments/environment.development';
+
+interface CvDto {
+  id: string;
+  auteur?: string;
+  email?: string;
+  adres?: string;
+  inleiding?: string;
+  werkervaringInstances?: string[];
+  opleidingInstances?: string[];
+  certificaatInstances?: string[];
+  vaardigheidInstances?: { beschrijving: string; niveau: number }[];
+  isFavorite?: boolean;
+  lastUpdated?: string;
+}
 
 @Component({
   selector: 'app-explorer',
@@ -94,8 +109,10 @@ export class Explorer implements OnInit {
   }
 
   private loadCVDetails() {
-    this.http.get<CVDetails[]>('/data/cv-details.json').subscribe({
-      next: (details) => {
+    this.http.get<CvDto[]>(`${environment.apiUrl}/api/cvs/all`).subscribe({
+      next: (cvDtos) => {
+        const details = cvDtos.map((dto) => this.mapDtoToDetails(dto));
+
         details.forEach((cv) => this.cvDetailsMap.set(cv.id, cv));
 
         const allChildren: CVNode[] = details.map((cv) => ({
@@ -137,6 +154,41 @@ export class Explorer implements OnInit {
         console.error('Error loading CV details:', error);
       },
     });
+  }
+
+  private mapDtoToDetails(dto: CvDto): CVDetails {
+    return {
+      id: dto.id,
+      name: dto.auteur || 'Unknown',
+      email: dto.email,
+      location: dto.adres,
+      summary: dto.inleiding,
+      experience:
+        dto.werkervaringInstances?.map((exp) => ({
+          company: exp,
+          position: '',
+          startDate: null,
+          endDate: null,
+        })) || [],
+      education:
+        dto.opleidingInstances?.map((edu) => ({
+          institution: edu,
+          degree: '',
+          startDate: null,
+          endDate: null,
+        })) || [],
+      certifications:
+        dto.certificaatInstances?.map((cert) => ({
+          name: cert,
+        })) || [],
+      skills:
+        dto.vaardigheidInstances?.map((skill) => ({
+          name: skill.beschrijving,
+          level: skill.niveau,
+        })) || [],
+      languages: [],
+      lastUpdated: dto.lastUpdated,
+    };
   }
 
   isFavoriteById(id?: string): boolean {
