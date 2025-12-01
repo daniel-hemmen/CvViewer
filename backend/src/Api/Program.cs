@@ -2,6 +2,7 @@ using CvViewer.ApplicationServices.Extensions;
 using CvViewer.DataAccess;
 using CvViewer.DataAccess.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Web;
 
 namespace CvViewer.Api;
@@ -43,7 +44,7 @@ public partial class Program
 
         if (!app.Environment.IsDevelopment())
         {
-            EnsureDatabaseCreated(app);
+            ApplyMigrationsAsync(app);
         }
 
         if (app.Environment.IsDevelopment())
@@ -64,12 +65,12 @@ public partial class Program
         app.Run();
     }
 
-    private static void EnsureDatabaseCreated(WebApplication? app)
+    private static void ApplyMigrationsAsync(WebApplication? app)
     {
         using var scope = app!.Services.CreateScope();
 
         var context = scope.ServiceProvider.GetRequiredService<CvContext>();
 
-        context.Database.EnsureCreated();
+        context.Database.MigrateAsync();
     }
 }

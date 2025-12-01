@@ -1,4 +1,5 @@
-﻿using CvViewer.DataAccess.Snapshots;
+﻿using System.ComponentModel.DataAnnotations;
+using CvViewer.DataAccess.Snapshots;
 using NodaTime;
 
 namespace CvViewer.DataAccess.Entities;
@@ -22,4 +23,7 @@ public class CvEntity
     public string? Inleiding { get; set; }
     public bool IsFavorite { get; set; }
     public Instant LastUpdated { get; set; }
+
+    [Timestamp]
+    public byte[] RowVersion { get; set; } = default!;
 }

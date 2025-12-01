@@ -2,8 +2,7 @@
 
 public sealed class CvCreationException : Exception
 {
-    public CvCreationException()
-        : base("Failed to create CV.")
+    public CvCreationException() : base("Failed to create CV.")
     {
     }
 }
