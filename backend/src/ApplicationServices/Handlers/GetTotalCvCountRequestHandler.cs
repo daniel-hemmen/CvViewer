@@ -13,5 +13,5 @@ public sealed class GetTotalCvCountRequestHandler : IRequestHandler<GetTotalCvCo
     }
 
     public async Task<int?> Handle(GetTotalCvCountRequest _, CancellationToken cancellationToken)
-        => await _cvRepository.GetFavoritedCvCountAsync(cancellationToken);
+        => await _cvRepository.GetTotalCvCountAsync(cancellationToken);
 }

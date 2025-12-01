@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
@@ -16,13 +16,14 @@ interface Cv {
   imports: [CommonModule, MatCardModule, MatIconModule],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss',
+  changeDetection: ChangeDetectionStrategy.Default,
 })
 export class Dashboard implements OnInit {
-  private http = inject(HttpClient);
+  private readonly http = inject(HttpClient);
 
-  totalCvs: number | null = null;
-  recentlyUpdated: number | null = null;
-  favorites: number | null = null;
+  totalCvs = signal<number | undefined>(undefined);
+  recentlyUpdated = signal<number | undefined>(undefined);
+  favorites = signal<number | undefined>(undefined);
 
   ngOnInit(): void {
     this.loadSummary();
@@ -34,22 +35,22 @@ export class Dashboard implements OnInit {
     const thirtyDaysAgoIso = thirtyDaysAgo.toISOString();
 
     forkJoin({
-      totalCvs: this.http.get<number>(`${environment.apiUrl}/api/cvs/total`),
+      totalCvs: this.http.get<number>(`${environment.apiUrl}/api/cvs/count/total`),
       favorites: this.http.get<number>(`${environment.apiUrl}/api/cvs/count/favorited`),
       recentlyUpdated: this.http.get<Cv[]>(
         `${environment.apiUrl}/api/cvs/count/updated-since/${thirtyDaysAgoIso}`
       ),
     }).subscribe({
       next: (results) => {
-        this.totalCvs = results.totalCvs ?? 0;
-        this.favorites = results.favorites ?? 0;
-        this.recentlyUpdated = results.recentlyUpdated?.length ?? 0;
+        this.totalCvs.set(results.totalCvs ?? 0);
+        this.favorites.set(results.favorites ?? 0);
+        this.recentlyUpdated.set(results.recentlyUpdated?.length ?? 0);
       },
       error: (err) => {
         console.error('Failed to load dashboard data', err);
-        this.totalCvs = 0;
-        this.recentlyUpdated = 0;
-        this.favorites = 0;
+        this.totalCvs.set(0);
+        this.recentlyUpdated.set(0);
+        this.favorites.set(0);
       },
     });
   }

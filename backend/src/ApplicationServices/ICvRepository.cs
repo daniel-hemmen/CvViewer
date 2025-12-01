@@ -9,6 +9,7 @@ public interface ICvRepository
     Task<bool> AddCvsAsync(CancellationToken cancellationToken, params Cv[] cvs);
     public Task<int?> GetFavoritedCvCountAsync(CancellationToken cancellationToken);
     public Task<Cv?> GetLastUpdatedCvAsync(CancellationToken cancellationToken);
+    public Task<int?> GetTotalCvCountAsync(CancellationToken cancellationToken);
     public Task<List<Cv>?> GetCvsUpdatedSinceAsync(Instant since, CancellationToken cancellationToken);
     public Task<List<Cv>?> GetAllCvsAsync(CancellationToken cancellationToken);
 }
