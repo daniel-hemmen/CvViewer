@@ -10,7 +10,7 @@ public static class ServiceCollectionExtensions
     {
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GetFavoritedCvCountRequestHandler).Assembly));
 
-        services.AddScoped(_ => new BlobServiceClient(storageUrl));
+        services.AddScoped(_ => new BlobServiceClient(new Uri(storageUrl)));
 
         return services;
     }
