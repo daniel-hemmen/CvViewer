@@ -1,5 +1,5 @@
 ﻿using CvViewer.Api.Mappers;
-using CvViewer.ApplicationServices.Requests;
+using CvViewer.ApplicationServices.Requests.Cvs;
 using CvViewer.Domain;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;

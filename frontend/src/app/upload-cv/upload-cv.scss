@@ -1,0 +1,49 @@
+.upload-container {
+  padding: 24px;
+  display: flex;
+  justify-content: center;
+}
+
+.upload-card {
+  max-width: 600px;
+  width: 100%;
+}
+
+.step-section {
+  margin: 24px 0;
+
+  h3 {
+    margin-top: 0;
+    font-size: 1.1rem;
+    font-weight: 500;
+  }
+
+  p {
+    color: var(--mat-sys-on-surface-variant);
+    margin-bottom: 16px;
+  }
+}
+
+mat-divider {
+  margin: 24px 0;
+}
+
+.file-input-container {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.file-name {
+  font-style: italic;
+  color: var(--mat-sys-on-surface);
+}
+
+.actions {
+  margin-top: 16px;
+}
+
+.upload-progress {
+  margin-top: 16px;
+}
