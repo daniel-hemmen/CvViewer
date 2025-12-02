@@ -94,7 +94,7 @@ public static class CvMapper
     private static VaardigheidInstanceSnapshot ToSnapshot(this VaardigheidInstance vaardigheid)
         => new()
         {
-            Beschrijving = vaardigheid.Naam,
+            Naam = vaardigheid.Naam,
             Niveau = vaardigheid.Niveau
         };
 
@@ -113,11 +113,11 @@ public static class CvMapper
             ? null
             : new Adres
             {
-                Straat = snapshot.Straat ?? string.Empty,
-                Huisnummer = snapshot.Huisnummer ?? string.Empty,
-                Postcode = snapshot.Postcode ?? string.Empty,
-                Plaats = snapshot.Stad ?? string.Empty,
-                Land = snapshot.Land ?? string.Empty
+                Straat = snapshot.Straat ?? "",
+                Huisnummer = snapshot.Huisnummer ?? "",
+                Postcode = snapshot.Postcode ?? "",
+                Plaats = snapshot.Stad ?? "",
+                Land = snapshot.Land ?? ""
             };
 
     private static WerkervaringInstance ToDomain(this WerkervaringInstanceSnapshot snapshot)
@@ -134,8 +134,8 @@ public static class CvMapper
     private static OpleidingInstance ToDomain(this OpleidingInstanceSnapshot snapshot)
         => new()
         {
-            Naam = snapshot.Title ?? string.Empty,
-            Instituut = snapshot.Instituut ?? string.Empty,
+            Naam = snapshot.Title ?? "",
+            Instituut = snapshot.Instituut ?? "",
             Startdatum = snapshot.Startdatum,
             Einddatum = snapshot.Einddatum ?? DateOnly.MinValue,
             Beschrijving = snapshot.Beschrijving
@@ -144,8 +144,8 @@ public static class CvMapper
     private static CertificaatInstance ToDomain(this CertificaatInstanceSnapshot snapshot)
         => new()
         {
-            Naam = snapshot.Naam ?? string.Empty,
-            Uitgever = snapshot.Uitgever ?? string.Empty,
+            Naam = snapshot.Naam ?? "",
+            Uitgever = snapshot.Uitgever ?? "",
             DatumAfgifte = snapshot.DatumAfgifte ?? DateOnly.MinValue,
             Verloopdatum = snapshot.Verloopdatum,
             Url = snapshot.Url
@@ -154,7 +154,7 @@ public static class CvMapper
     private static VaardigheidInstance ToDomain(this VaardigheidInstanceSnapshot snapshot)
         => new()
         {
-            Naam = snapshot.Beschrijving ?? string.Empty,
+            Naam = snapshot.Naam ?? "",
             Niveau = snapshot.Niveau ?? 0
         };
 }

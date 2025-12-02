@@ -10,7 +10,8 @@ public static class VaardigheidInstanceConverter
     private static readonly JsonSerializerOptions SerializerOptions = new()
     {
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-        DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
+        DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull,
+        PropertyNameCaseInsensitive = true
     };
 
     public static ValueConverter<List<VaardigheidInstanceSnapshot>, string> Converter
@@ -21,8 +22,18 @@ public static class VaardigheidInstanceConverter
 
     public static ValueComparer<List<VaardigheidInstanceSnapshot>> ValueComparer
         => new(
-            equalsExpression: (l1, l2) => l1 == null && l2 == null || l1 != null && l2 != null && JsonSerializer.Serialize(l1, SerializerOptions) == JsonSerializer.Serialize(l2, SerializerOptions),
-            hashCodeExpression: l => l == null ? 0 : JsonSerializer.Serialize(l, SerializerOptions).GetHashCode(),
-            snapshotExpression: l => l == null ? new() : JsonSerializer.Deserialize<List<VaardigheidInstanceSnapshot>>(JsonSerializer.Serialize(l, SerializerOptions), SerializerOptions) ?? new()
+            equalsExpression: (l1, l2) =>
+                l1 == null && l2 == null ||
+                l1 != null && l2 != null &&
+                JsonSerializer.Serialize(l1, SerializerOptions) == JsonSerializer.Serialize(l2, SerializerOptions),
+            hashCodeExpression: l =>
+                l == null
+                    ? 0
+                    : JsonSerializer.Serialize(l, SerializerOptions).GetHashCode(),
+            snapshotExpression: l =>
+                l == null
+                    ? new()
+                    : JsonSerializer.Deserialize<List<VaardigheidInstanceSnapshot>>(
+                        JsonSerializer.Serialize(l, SerializerOptions), SerializerOptions) ?? new()
         );
 }
