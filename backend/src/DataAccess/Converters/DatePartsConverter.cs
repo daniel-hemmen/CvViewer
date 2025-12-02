@@ -1,3 +1,4 @@
+using System.Text.Json;
 using CvViewer.Types;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
@@ -6,30 +7,34 @@ namespace CvViewer.DataAccess.Converters;
 
 public static class DatePartsConverter
 {
-    public static ValueConverter<DateParts, DateOnly> Converter
+    private static readonly JsonSerializerOptions SerializerOptions = new()
+    {
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+        DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull,
+        PropertyNameCaseInsensitive = true
+    };
+
+    public static ValueConverter<DateParts, string> Converter
         => new(
-            v => v.DateOnly,
-            v => new DateParts(v.Year, v.Month, v.Day)
+            v => JsonSerializer.Serialize(v, SerializerOptions),
+            v => JsonSerializer.Deserialize<DateParts>(v, SerializerOptions)
         );
 
-    public static ValueConverter<DateParts?, DateOnly?> NullableConverter
+    public static ValueConverter<DateParts?, string?> NullableConverter
         => new(
             v => v == null
                 ? null
-                : v.Value.DateOnly,
+                : JsonSerializer.Serialize(v.Value, SerializerOptions),
             v => v == null
                 ? null
-                : new DateParts(v.Value.Year, v.Value.Month, v.Value.Day)
+                : JsonSerializer.Deserialize<DateParts>(v, SerializerOptions)
         );
 
     public static ValueComparer<DateParts> ValueComparer
         => new(
-            (l, r) =>
-                l.Year == r.Year &&
-                l.Month == r.Month &&
-                l.Day == r.Day,
+            (l, r) => l.Year == r.Year && l.Month == r.Month && l.Day == r.Day,
             v => HashCode.Combine(v.Year, v.Month, v.Day),
-            v => new DateParts(v.Year, v.Month, v.Day)
+            v => v
         );
 
     public static ValueComparer<DateParts?> NullableValueComparer
@@ -43,8 +48,6 @@ public static class DatePartsConverter
             v => v == null
                 ? 0
                 : HashCode.Combine(v.Value.Year, v.Value.Month, v.Value.Day),
-            v => v == null
-                ? null
-                : new DateParts(v.Value.Year, v.Value.Month, v.Value.Day)
+            v => v
         );
 }
