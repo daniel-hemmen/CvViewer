@@ -5,6 +5,7 @@ public sealed record CvDto(
     string? Auteur,
     string? Email,
     string? Adres,
+    string? Telefoonnummer,
     string? Inleiding,
     List<WerkervaringInstanceDto> WerkervaringInstances,
     List<OpleidingInstanceDto> OpleidingInstances,
