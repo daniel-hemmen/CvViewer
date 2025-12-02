@@ -32,25 +32,43 @@ public class CvEntityConfiguration : IEntityTypeConfiguration<CvEntity>
             ab.Property(p => p.Land).HasMaxLength(100);
         });
 
-        builder.OwnsMany(c => c.WerkervaringInstances, wb =>
+        builder.OwnsMany(c => c.WerkervaringInstances, (OwnedNavigationBuilder<CvEntity, WerkervaringInstanceSnapshot> wb) =>
         {
             wb.WithOwner().HasForeignKey("CvId");
             wb.Property<int>("Id");
             wb.HasKey("Id");
+
+            var startProp = wb.Property(w => w.Startdatum).HasConversion(DatePartsConverter.Converter);
+            startProp.Metadata.SetValueComparer(DatePartsConverter.ValueComparer);
+
+            var endProp = wb.Property(w => w.Einddatum).HasConversion(DatePartsConverter.NullableConverter);
+            endProp.Metadata.SetValueComparer(DatePartsConverter.NullableValueComparer);
         });
 
-        builder.OwnsMany(c => c.OpleidingInstances, ob =>
+        builder.OwnsMany(c => c.OpleidingInstances, (OwnedNavigationBuilder<CvEntity, OpleidingInstanceSnapshot> ob) =>
         {
             ob.WithOwner().HasForeignKey("CvId");
             ob.Property<int>("Id");
             ob.HasKey("Id");
+
+            var startProp = ob.Property(o => o.Startdatum).HasConversion(DatePartsConverter.NullableConverter);
+            startProp.Metadata.SetValueComparer(DatePartsConverter.NullableValueComparer);
+
+            var endProp = ob.Property(o => o.Einddatum).HasConversion(DatePartsConverter.Converter);
+            endProp.Metadata.SetValueComparer(DatePartsConverter.ValueComparer);
         });
 
-        builder.OwnsMany(c => c.CertificaatInstances, cb =>
+        builder.OwnsMany(c => c.CertificaatInstances, (OwnedNavigationBuilder<CvEntity, CertificaatInstanceSnapshot> cb) =>
         {
             cb.WithOwner().HasForeignKey("CvId");
             cb.Property<int>("Id");
             cb.HasKey("Id");
+
+            var afgifte = cb.Property(c => c.DatumAfgifte).HasConversion(DatePartsConverter.Converter);
+            afgifte.Metadata.SetValueComparer(DatePartsConverter.ValueComparer);
+
+            var verloop = cb.Property(c => c.Verloopdatum).HasConversion(DatePartsConverter.NullableConverter);
+            verloop.Metadata.SetValueComparer(DatePartsConverter.NullableValueComparer);
         });
 
         PropertyBuilder<List<VaardigheidInstanceSnapshot>> vaardigheidProperty = builder.Property(c => c.VaardigheidInstances)

@@ -1,6 +1,7 @@
 ﻿using CvViewer.DataAccess.Entities;
 using CvViewer.DataAccess.Snapshots;
 using CvViewer.Domain;
+using CvViewer.Types;
 
 namespace CvViewer.DataAccess.Mappers;
 
@@ -63,18 +64,18 @@ public static class CvMapper
     private static WerkervaringInstanceSnapshot ToSnapshot(this WerkervaringInstance werkervaring)
         => new()
         {
-            Bedrijfsnaam = werkervaring.Bedrijfsnaam,
-            Functietitel = werkervaring.Functietitel,
+            Organisatie = werkervaring.Organisatie,
+            Rol = werkervaring.Rol,
             Startdatum = werkervaring.Startdatum,
             Einddatum = werkervaring.Einddatum,
-            Locatie = werkervaring.Locatie,
+            Plaats = werkervaring.Plaats,
             Beschrijving = werkervaring.Beschrijving
         };
 
     private static OpleidingInstanceSnapshot ToSnapshot(this OpleidingInstance opleiding)
         => new()
         {
-            Title = opleiding.Naam,
+            Naam = opleiding.Naam,
             Instituut = opleiding.Instituut,
             Startdatum = opleiding.Startdatum,
             Einddatum = opleiding.Einddatum,
@@ -123,21 +124,21 @@ public static class CvMapper
     private static WerkervaringInstance ToDomain(this WerkervaringInstanceSnapshot snapshot)
         => new()
         {
-            Bedrijfsnaam = snapshot.Bedrijfsnaam,
-            Functietitel = snapshot.Functietitel,
+            Organisatie = snapshot.Organisatie,
+            Rol = snapshot.Rol,
             Startdatum = snapshot.Startdatum,
             Einddatum = snapshot.Einddatum,
-            Locatie = snapshot.Locatie,
+            Plaats = snapshot.Plaats,
             Beschrijving = snapshot.Beschrijving
         };
 
     private static OpleidingInstance ToDomain(this OpleidingInstanceSnapshot snapshot)
         => new()
         {
-            Naam = snapshot.Title ?? "",
+            Naam = snapshot.Naam ?? "",
             Instituut = snapshot.Instituut ?? "",
             Startdatum = snapshot.Startdatum,
-            Einddatum = snapshot.Einddatum ?? DateOnly.MinValue,
+            Einddatum = snapshot.Einddatum,
             Beschrijving = snapshot.Beschrijving
         };
 
@@ -146,7 +147,7 @@ public static class CvMapper
         {
             Naam = snapshot.Naam ?? "",
             Uitgever = snapshot.Uitgever ?? "",
-            DatumAfgifte = snapshot.DatumAfgifte ?? DateOnly.MinValue,
+            DatumAfgifte = snapshot.DatumAfgifte,
             Verloopdatum = snapshot.Verloopdatum,
             Url = snapshot.Url
         };

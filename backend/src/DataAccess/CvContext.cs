@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
 using CvViewer.DataAccess.Configurations;
 using CvViewer.DataAccess.Entities;
+using CvViewer.DataAccess.Converters;
 using Microsoft.EntityFrameworkCore;
 
 namespace CvViewer.DataAccess;
@@ -20,5 +21,27 @@ public class CvContext(DbContextOptions<CvContext> options) : DbContext(options)
     public DbSet<CertificaatInstanceEntity> CertificaatInstances { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
-        => modelBuilder.ApplyConfigurationsFromAssembly(typeof(CvEntityConfiguration).Assembly);
+    {
+        // Apply standard configurations
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(CvEntityConfiguration).Assembly);
+
+        // Ensure EF knows how to persist DateParts on entity types by converting to DateOnly for provider
+        modelBuilder.Entity<WerkervaringInstanceEntity>(b =>
+        {
+            b.Property(e => e.Startdatum).HasConversion(DatePartsConverter.Converter).Metadata.SetValueComparer(DatePartsConverter.ValueComparer);
+            b.Property(e => e.Einddatum).HasConversion(DatePartsConverter.NullableConverter).Metadata.SetValueComparer(DatePartsConverter.NullableValueComparer);
+        });
+
+        modelBuilder.Entity<OpleidingInstanceEntity>(b =>
+        {
+            b.Property(e => e.Startdatum).HasConversion(DatePartsConverter.NullableConverter).Metadata.SetValueComparer(DatePartsConverter.NullableValueComparer);
+            b.Property(e => e.Einddatum).HasConversion(DatePartsConverter.Converter).Metadata.SetValueComparer(DatePartsConverter.ValueComparer);
+        });
+
+        modelBuilder.Entity<CertificaatInstanceEntity>(b =>
+        {
+            b.Property(e => e.DatumAfgifte).HasConversion(DatePartsConverter.Converter).Metadata.SetValueComparer(DatePartsConverter.ValueComparer);
+            b.Property(e => e.Verloopdatum).HasConversion(DatePartsConverter.NullableConverter).Metadata.SetValueComparer(DatePartsConverter.NullableValueComparer);
+        });
+    }
 }

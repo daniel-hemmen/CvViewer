@@ -2,29 +2,28 @@
 
 #nullable disable
 
-namespace CvViewer.DataAccess.Migrations
+namespace CvViewer.DataAccess.Migrations;
+
+/// <inheritdoc />
+public partial class AddRowVersion : Migration
 {
     /// <inheritdoc />
-    public partial class AddRowVersion : Migration
+    protected override void Up(MigrationBuilder migrationBuilder)
     {
-        /// <inheritdoc />
-        protected override void Up(MigrationBuilder migrationBuilder)
-        {
-            migrationBuilder.AddColumn<byte[]>(
-                name: "RowVersion",
-                table: "Cvs",
-                type: "rowversion",
-                rowVersion: true,
-                nullable: false,
-                defaultValue: new byte[0]);
-        }
+        migrationBuilder.AddColumn<byte[]>(
+            name: "RowVersion",
+            table: "Cvs",
+            type: "rowversion",
+            rowVersion: true,
+            nullable: false,
+            defaultValue: new byte[0]);
+    }
 
-        /// <inheritdoc />
-        protected override void Down(MigrationBuilder migrationBuilder)
-        {
-            migrationBuilder.DropColumn(
-                name: "RowVersion",
-                table: "Cvs");
-        }
+    /// <inheritdoc />
+    protected override void Down(MigrationBuilder migrationBuilder)
+    {
+        migrationBuilder.DropColumn(
+            name: "RowVersion",
+            table: "Cvs");
     }
 }

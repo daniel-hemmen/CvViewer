@@ -2,21 +2,20 @@
 
 #nullable disable
 
-namespace CvViewer.DataAccess.Migrations
+namespace CvViewer.DataAccess.Migrations;
+
+/// <inheritdoc />
+public partial class RemoveBeschrijvingFromSnapshot : Migration
 {
     /// <inheritdoc />
-    public partial class RemoveBeschrijvingFromSnapshot : Migration
+    protected override void Up(MigrationBuilder migrationBuilder)
     {
-        /// <inheritdoc />
-        protected override void Up(MigrationBuilder migrationBuilder)
-        {
 
-        }
+    }
 
-        /// <inheritdoc />
-        protected override void Down(MigrationBuilder migrationBuilder)
-        {
+    /// <inheritdoc />
+    protected override void Down(MigrationBuilder migrationBuilder)
+    {
 
-        }
     }
 }

@@ -1,18 +1,15 @@
-﻿namespace CvViewer.Domain;
+﻿using CvViewer.Types;
+
+namespace CvViewer.Domain;
 
 public sealed record WerkervaringInstance
 {
-    public required string Bedrijfsnaam { get; init; }
-    public required string Functietitel { get; init; }
-    public DateOnly Startdatum { get; init; }
-    public DateOnly? Einddatum { get; init; }
-    public string? Locatie { get; init; }
+    public required string Rol { get; init; }
+    public required string Organisatie { get; init; }
+    public DateParts Startdatum { get; init; }
+    public DateParts? Einddatum { get; init; }
     public string? Beschrijving { get; init; }
+    public string? Plaats { get; init; }
 
-    public override string ToString() => $"{Bedrijfsnaam} - {Functietitel} | {FormatDates()}";
-
-    private string FormatDates()
-        => Einddatum.HasValue
-            ? $"{Startdatum:dd-MM-yyyy} - {Einddatum:dd-MM-yyyy}"
-            : $"{Startdatum:dd-MM-yyyy} - heden";
+    public override string ToString() => $"{Organisatie} - {Rol} | {new DatePartsRange(Startdatum, Einddatum)}";
 }

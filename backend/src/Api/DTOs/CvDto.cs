@@ -1,16 +1,14 @@
 ﻿namespace CvViewer.Api.DTOs;
 
-public sealed record CvDto()
-{
-    public Guid Id { get; set; }
-    public string? Auteur { get; set; }
-    public string? Email { get; set; }
-    public string? Adres { get; set; }
-    public string? Inleiding { get; set; }
-    public List<string> WerkervaringInstances { get; set; } = [];
-    public List<string> OpleidingInstances { get; set; } = [];
-    public List<string> CertificaatInstances { get; set; } = [];
-    public List<VaardigheidInstanceDto> VaardigheidInstances { get; set; } = [];
-    public bool IsFavorite { get; set; }
-    public DateTimeOffset? LastUpdated { get; set; }
-}
+public sealed record CvDto(
+    Guid Id,
+    string? Auteur,
+    string? Email,
+    string? Adres,
+    string? Inleiding,
+    List<WerkervaringInstanceDto> WerkervaringInstances,
+    List<OpleidingInstanceDto> OpleidingInstances,
+    List<CertificaatInstanceDto> CertificaatInstances,
+    List<VaardigheidInstanceDto> VaardigheidInstances,
+    bool IsFavorited,
+    DateTimeOffset? LastUpdated);

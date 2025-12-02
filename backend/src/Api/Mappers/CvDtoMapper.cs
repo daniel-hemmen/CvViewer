@@ -10,19 +10,18 @@ public static class CvDtoMapper
     {
         ArgumentNullException.ThrowIfNull(cv);
 
-        return new()
-        {
-            Id = cv.Id,
-            Auteur = cv.Auteur.FullName,
-            Email = cv.Contactgegevens?.Email,
-            Adres = cv.Auteur.Adres?.FullAdres,
-            Inleiding = cv.Inleiding,
-            WerkervaringInstances = [.. cv.WerkervaringInstances.Select(w => w.ToString())],
-            OpleidingInstances = [.. cv.OpleidingInstances.Select(o => o.ToString())],
-            CertificaatInstances = [.. cv.CertificaatInstances.Select(c => c.ToString())],
-            VaardigheidInstances = [.. cv.VaardigheidInstances.Select(v => new VaardigheidInstanceDto(v.Naam, v.Niveau))],
-            IsFavorite = cv.IsFavorited,
-            LastUpdated = cv.LastUpdated.ToDateTimeOffset()
-        };
+        return new(
+            Id: cv.Id,
+            Auteur: cv.Auteur.FullName,
+            Email: cv.Contactgegevens?.Email,
+            Adres: cv.Auteur.Adres?.FullAdres,
+            Inleiding: cv.Inleiding,
+            WerkervaringInstances: [.. cv.WerkervaringInstances.Select(instance => instance.ToDto())],
+            OpleidingInstances: [.. cv.OpleidingInstances.Select(instance => instance.ToDto())],
+            CertificaatInstances: [.. cv.CertificaatInstances.Select(instance => instance.ToDto())],
+            VaardigheidInstances: [.. cv.VaardigheidInstances.Select(instance => instance.ToDto())],
+            IsFavorited: cv.IsFavorited,
+            LastUpdated: cv.LastUpdated.ToDateTimeOffset()
+        );
     }
 }

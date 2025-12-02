@@ -157,7 +157,11 @@ export class DetailView {
 
   formatSkillLabel(skill: any): string {
     if (!skill) return '';
-    if (typeof skill === 'object') return skill.name ?? JSON.stringify(skill);
+    if (typeof skill === 'object') {
+      const label = String(skill.name ?? 'noname').trim();
+      if (label.length > 0) return label;
+      return '';
+    }
     return String(skill);
   }
 
