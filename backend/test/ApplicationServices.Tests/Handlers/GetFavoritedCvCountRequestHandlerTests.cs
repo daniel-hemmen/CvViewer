@@ -1,5 +1,5 @@
-﻿using CvViewer.ApplicationServices.Handlers;
-using CvViewer.ApplicationServices.Requests;
+﻿using CvViewer.ApplicationServices.Handlers.Cvs;
+using CvViewer.ApplicationServices.Requests.Cvs;
 using Moq;
 using Shouldly;
 
