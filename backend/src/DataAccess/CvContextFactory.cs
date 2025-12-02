@@ -11,10 +11,10 @@ public class CvContextFactory : IDesignTimeDbContextFactory<CvContext>
 
         optionsBuilder.UseSqlServer(
             "Server=localhost;Database=CvDb;Trusted_Connection=True;Encrypt=False;",
-            sql =>
+            options =>
             {
-                sql.UseNodaTime();
-                sql.EnableRetryOnFailure();
+                options.UseNodaTime();
+                options.EnableRetryOnFailure();
             });
 
         return new CvContext(optionsBuilder.Options);
