@@ -22,10 +22,8 @@ public class CvContext(DbContextOptions<CvContext> options) : DbContext(options)
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        // Apply standard configurations
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(CvEntityConfiguration).Assembly);
 
-        // Ensure EF knows how to persist DateParts on entity types by converting to DateOnly for provider
         modelBuilder.Entity<WerkervaringInstanceEntity>(b =>
         {
             b.Property(e => e.Startdatum)
