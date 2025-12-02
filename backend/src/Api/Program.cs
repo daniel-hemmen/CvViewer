@@ -33,6 +33,7 @@ public partial class Program
 
         builder.Services.AddControllers();
         builder.Services.AddOpenApi();
+        builder.Services.AddHealthChecks();
 
         var connectionString = Environment.GetEnvironmentVariable("AZURE_SQL_CONNECTIONSTRING")
             ?? builder.Configuration.GetConnectionString("DefaultConnection");
