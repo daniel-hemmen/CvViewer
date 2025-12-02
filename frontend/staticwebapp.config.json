@@ -11,13 +11,13 @@
       }
     },
     {
-      "route": "/**/*.js",
+      "route": "/*.js",
       "headers": {
         "Cache-Control": "public, max-age=31536000, immutable"
       }
     },
     {
-      "route": "/**/*.css",
+      "route": "/*.css",
       "headers": {
         "Cache-Control": "public, max-age=31536000, immutable"
       }
