@@ -1,4 +1,6 @@
 ﻿using CvViewer.ApplicationServices;
+using CvViewer.DataAccess.Entities;
+using CvViewer.DataAccess.Seeder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -18,11 +20,45 @@ public static class ServiceCollectionExtensions
                 {
                     options.UseNodaTime();
                     options.EnableRetryOnFailure();
+                })
+                .UseSeeding((context, _) =>
+                {
+                    var cvs = context.Set<CvEntity>().FirstOrDefault();
+                    if (cvs == null)
+                    {
+                        DatabaseSeeder.Seed((CvContext)context);
+                    }
+                })
+                .UseAsyncSeeding(async (context, _, cancellationToken) =>
+                {
+                    var cvs = await context.Set<CvEntity>().FirstOrDefaultAsync(cancellationToken);
+
+                    if (cvs == null)
+                    {
+                        await DatabaseSeeder.SeedAsync((CvContext)context, cancellationToken);
+                    }
                 });
             }
             else
             {
-                options.UseInMemoryDatabase(InMemoryDatabaseName);
+                options.UseInMemoryDatabase(InMemoryDatabaseName)
+                .UseSeeding((context, _) =>
+                {
+                    var cvs = context.Set<CvEntity>().FirstOrDefault();
+                    if (cvs == null)
+                    {
+                        DatabaseSeeder.Seed((CvContext)context);
+                    }
+                })
+                .UseAsyncSeeding(async (context, _, cancellationToken) =>
+                {
+                    var cvs = await context.Set<CvEntity>().FirstOrDefaultAsync(cancellationToken);
+
+                    if (cvs == null)
+                    {
+                        await DatabaseSeeder.SeedAsync((CvContext)context, cancellationToken);
+                    }
+                });
             }
         });
 
