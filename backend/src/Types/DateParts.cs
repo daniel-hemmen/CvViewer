@@ -1,4 +1,6 @@
-﻿namespace CvViewer.Types;
+﻿using System.Text.Json.Serialization;
+
+namespace CvViewer.Types;
 
 public readonly struct DateParts
 {
@@ -8,6 +10,7 @@ public readonly struct DateParts
 
     public DateOnly DateOnly => new(Year, Month ?? 1, Day ?? 1);
 
+    [JsonConstructor]
     public DateParts(int year, int? month, int? day)
     {
         Year = year;

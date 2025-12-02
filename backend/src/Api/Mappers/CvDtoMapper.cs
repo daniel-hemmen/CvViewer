@@ -13,6 +13,7 @@ public static class CvDtoMapper
         return new(
             Id: cv.Id,
             Auteur: cv.Auteur.FullName,
+            Telefoonnummer: cv.Contactgegevens?.Telefoonnummer,
             Email: cv.Contactgegevens?.Email,
             Adres: cv.Auteur.Adres?.FullAdres,
             Inleiding: cv.Inleiding,
