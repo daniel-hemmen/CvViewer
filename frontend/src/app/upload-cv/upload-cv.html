@@ -1,0 +1,54 @@
+<div class="upload-container">
+  <mat-card class="upload-card">
+    <mat-card-header>
+      <mat-card-title>Upload CV</mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+      <div class="step-section">
+        <h3>Stap 1: Download het template</h3>
+        <button mat-stroked-button color="primary" (click)="downloadTemplate()">
+          <mat-icon>download</mat-icon>
+          Download template
+        </button>
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <div class="step-section">
+        <h3>Stap 2: Upload het CV</h3>
+        <p>Selecteer hier het ingevulde .xlsx bestand om te uploaden.</p>
+
+        <div class="file-input-container">
+          <input
+            type="file"
+            #fileInput
+            style="display: none"
+            accept=".xlsx"
+            (change)="onFileSelected($event)"
+          />
+          <button mat-raised-button (click)="fileInput.click()">
+            <mat-icon>folder_open</mat-icon>
+            Selecteer .xlsx bestand
+          </button>
+          <span class="file-name" *ngIf="selectedFile()">
+            {{ selectedFile()?.name }}
+          </span>
+        </div>
+
+        <div class="actions" *ngIf="selectedFile()">
+          <button mat-flat-button color="primary" [disabled]="isUploading()" (click)="uploadFile()">
+            <mat-icon>cloud_upload</mat-icon>
+            Upload
+          </button>
+        </div>
+
+        <mat-progress-bar
+          *ngIf="isUploading()"
+          mode="indeterminate"
+          class="upload-progress"
+        ></mat-progress-bar>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

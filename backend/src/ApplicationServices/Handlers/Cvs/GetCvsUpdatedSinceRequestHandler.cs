@@ -1,8 +1,8 @@
-﻿using CvViewer.ApplicationServices.Requests;
+﻿using CvViewer.ApplicationServices.Requests.Cvs;
 using CvViewer.Domain;
 using MediatR;
 
-namespace CvViewer.ApplicationServices.Handlers;
+namespace CvViewer.ApplicationServices.Handlers.Cvs;
 
 public sealed class GetCvsUpdatedSinceRequestHandler : IRequestHandler<GetCvsUpdatedSinceRequest, List<Cv>?>
 {

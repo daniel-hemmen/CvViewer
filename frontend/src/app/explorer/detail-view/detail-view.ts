@@ -1,25 +1,76 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
+
+// Angular Material
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
-import {
-  CVDetails,
-  DateParts,
-  CVExperienceItem,
-  CVEducationItem,
-  SkillItem,
-  Certification,
-  LanguageItem,
-} from '../../models/cv.models';
 import { MatTableModule } from '@angular/material/table';
 
+// -----------------------
+// Interfaces
+// -----------------------
+
+interface DateParts {
+  year?: number;
+  month?: number;
+  day?: number;
+}
+
+interface CVExperienceItem {
+  company: string;
+  position: string;
+  startDate?: DateParts | null;
+  endDate?: DateParts | null;
+  description?: string;
+  location?: string;
+}
+
+interface CVEducationItem {
+  institution: string;
+  degree: string;
+  startDate?: DateParts | null;
+  endDate?: DateParts | null;
+  description?: string;
+}
+
+interface Certification {
+  name: string;
+  issuer?: string;
+  date?: DateParts | null;
+  expiration?: DateParts | null;
+  url?: string;
+}
+
+interface SkillItem {
+  name: string;
+  level?: number;
+}
+
+interface CVDetails {
+  id: string;
+  name: string;
+  email?: string;
+  phone?: string;
+  location?: string;
+  summary?: string;
+  experience: CVExperienceItem[];
+  education: CVEducationItem[];
+  certifications: Certification[];
+  skills: SkillItem[];
+  lastUpdated?: string;
+}
+
+// -----------------------
+// Component
+// -----------------------
+
 @Component({
-  standalone: true,
   selector: 'explorer-detail-view',
+  standalone: true,
   imports: [
     CommonModule,
     MatTableModule,
@@ -34,27 +85,38 @@ import { MatTableModule } from '@angular/material/table';
   styleUrl: './detail-view.scss',
 })
 export class DetailView {
-  @Input() details: any | null = null;
-  @Input() isFavoriteById: ((id?: string) => boolean) | undefined;
-
+  // -----------------------
+  // Inputs & Outputs
+  // -----------------------
+  @Input() details: CVDetails | null = null;
+  @Input() isFavoriteById?: (id?: string) => boolean;
   @Output() toggleFavorite = new EventEmitter<string>();
 
-  toggle(item: CVExperienceItem) {
+  // Track which experience item is expanded
+  expandedItem: CVExperienceItem | null = null;
+
+  // -----------------------
+  // Expansion Logic
+  // -----------------------
+  toggle(item: CVExperienceItem): void {
     this.expandedItem = this.isExpanded(item) ? null : item;
   }
 
-  get dataSource(): CVExperienceItem[] {
-    return this.getExperience(this.details);
-  }
-
-  columnsToDisplay = ['Rol', 'Bedrijf', 'Periode'];
-  columnsToDisplayWithExpand = [...this.columnsToDisplay, 'expand'];
-  expandedItem: CVExperienceItem | null = null;
   isExpanded(item: CVExperienceItem): boolean {
     return this.expandedItem === item;
   }
 
-  getPropertyByColumn(item: CVExperienceItem, column: string): any {
+  // -----------------------
+  // Table Configuration
+  // -----------------------
+  get dataSource(): CVExperienceItem[] {
+    return this.details?.experience ?? [];
+  }
+
+  readonly columnsToDisplay = ['Rol', 'Bedrijf', 'Periode'];
+  readonly columnsToDisplayWithExpand = [...this.columnsToDisplay, 'expand'];
+
+  getPropertyByColumn(item: CVExperienceItem, column: string): string {
     switch (column) {
       case 'Rol':
         return item.position;
@@ -63,116 +125,88 @@ export class DetailView {
       case 'Periode':
         return this.formatExperiencePeriod(item);
       default:
-        return (item as any)[column];
+        return (item as any)[column] ?? '';
     }
   }
 
-  onToggleFavorite(cvId?: string, event?: MouseEvent) {
+  // -----------------------
+  // Favorites
+  // -----------------------
+  onToggleFavorite(cvId?: string, event?: MouseEvent): void {
     if (event) {
       event.preventDefault();
       event.stopPropagation();
     }
-    if (!cvId) return;
-    this.toggleFavorite.emit(cvId);
+    if (cvId) {
+      this.toggleFavorite.emit(cvId);
+    }
   }
 
+  // -----------------------
+  // Titles & Formatting
+  // -----------------------
   getPrimaryTitle(details: CVDetails | null): string | null {
-    if (!details || !details.experience || details.experience.length === 0) return null;
-    const e = details.experience[0];
-    const position = e.position ?? '';
-    const company = e.company ? ` • ${e.company}` : '';
-    return `${position}${company}`.trim();
+    if (!details?.experience?.length) return null;
+    const first = details.experience[0];
+    const pos = first.position ?? '';
+    const company = first.company ? ` • ${first.company}` : '';
+    return `${pos}${company}`.trim();
   }
 
-  private formatPeriod(start?: DateParts | null, end?: DateParts | null): string {
-    const fmt = (d?: DateParts | null) => {
-      if (!d) return '';
-      if (d.year && d.month) return `${String(d.year)}-${String(d.month).padStart(2, '0')}`;
-      if (d.year) return String(d.year);
-      return '';
-    };
-    const s = fmt(start);
-    const e = fmt(end);
-    if (!s && !e) return '';
-    if (!e) return `${s} — Heden`;
-    if (!s) return e;
-    return `${s} — ${e}`;
-  }
-
-  formatEducationYear(edu: CVEducationItem | undefined): string {
-    if (!edu) return '';
-    if (edu.endDate && edu.endDate.year) return String(edu.endDate.year);
-    if (edu.startDate && edu.startDate.year) return String(edu.startDate.year);
-    return '';
-  }
-
-  formatCertificationDate(cert: Certification | undefined): string {
-    if (!cert || !cert.date) return '';
-    const d = cert.date;
+  // -----------------------
+  // Helpers: Formatting
+  // -----------------------
+  private formatDateParts(d?: DateParts | null): string {
+    if (!d) return '';
     if (d.year && d.month && d.day)
       return `${d.year}-${String(d.month).padStart(2, '0')}-${String(d.day).padStart(2, '0')}`;
     if (d.year && d.month) return `${d.year}-${String(d.month).padStart(2, '0')}`;
-    if (d.year) return String(d.year);
+    if (d.year) return `${d.year}`;
     return '';
   }
 
-  getExperience(details: CVDetails | null): CVExperienceItem[] {
-    return details?.experience ?? [];
+  formatPeriod(start?: DateParts | null, end?: DateParts | null): string {
+    const s = this.formatDateParts(start);
+    const e = this.formatDateParts(end);
+
+    if (!s && !e) return '';
+    if (!e) return `${s} — Heden`;
+    if (!s) return e;
+
+    return `${s} — ${e}`;
   }
 
-  getSkills(details: CVDetails | null): SkillItem[] {
-    return details?.skills ?? [];
+  formatExperiencePeriod(item: CVExperienceItem): string {
+    return this.formatPeriod(item.startDate, item.endDate);
   }
 
-  getEducation(details: CVDetails | null): CVEducationItem[] {
-    return details?.education ?? [];
+  getSkills(d: CVDetails | null): SkillItem[] {
+    return d?.skills ?? [];
   }
 
-  getCertifications(details: CVDetails | null): Certification[] {
-    return details?.certifications ?? [];
-  }
-
-  getLanguages(details: CVDetails | null): LanguageItem[] {
-    const raw: any = (details as any)?.languages ?? [];
-    if (!raw || raw.length === 0) return [];
-    if (typeof raw[0] === 'string') {
-      return raw.map((s: string) => ({ name: s }));
-    }
-    return raw as LanguageItem[];
-  }
-
-  formatLanguage(lang: any): string {
-    if (!lang) return '';
-    if (typeof lang === 'string') return lang;
-    const prof = lang.proficiency ? ` • ${lang.proficiency}` : '';
-    return `${lang.name}${prof}`;
-  }
-
-  formatExperiencePeriod(exp: any): string {
-    if (!exp) return '';
-    const p = this.formatPeriod(exp.startDate, exp.endDate);
-    if (p) return p;
-    return exp.period ?? '';
-  }
-
-  formatSkillLabel(skill: any): string {
-    if (!skill) return '';
-    if (typeof skill === 'object') {
-      const label = String(skill.name ?? 'noname').trim();
-      if (label.length > 0) return label;
-      return '';
-    }
-    return String(skill);
-  }
-
-  formatSkillLevel(skill: any): string {
-    if (!skill) return '';
-    if (typeof skill === 'object' && skill.level) return `(${skill.level})`;
-    return '';
+  formatSkillLabel(skill: SkillItem): string {
+    return skill.name;
   }
 
   skillDotStates(level?: number): boolean[] {
-    const l = Math.max(0, Math.min(5, Number(level) || 0));
-    return Array.from({ length: 5 }, (_, i) => i < l);
+    const max = 5;
+    const current = level ?? 0;
+    return Array.from({ length: max }, (_, i) => i < current);
+  }
+
+  getEducation(d: CVDetails | null): CVEducationItem[] {
+    return d?.education ?? [];
+  }
+
+  formatEducationYear(edu: CVEducationItem): string {
+    return this.formatPeriod(edu.startDate, edu.endDate);
+  }
+
+  getCertifications(d: CVDetails | null): Certification[] {
+    return d?.certifications ?? [];
+  }
+
+  formatCertificationDate(cert: Certification): string {
+    return this.formatDateParts(cert.date);
   }
 }

@@ -13,6 +13,6 @@ export interface CvDto {
   OpleidingInstances?: string[];
   CertificaatInstances?: string[];
   VaardigheidInstances?: VaardigheidInstanceDto[];
-  IsFavorite?: boolean;
+  IsFavorited?: boolean;
   LastUpdated?: string;
 }

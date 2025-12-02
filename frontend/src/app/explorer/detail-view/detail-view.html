@@ -131,18 +131,6 @@
       }
     </div>
 
-    <div class="cv-section">
-      <h3>Talen</h3>
-      <div class="languages-list">
-        @for (lang of getLanguages(details); track lang.name) {
-        <div class="language-item">
-          <p class="language-name">{{ lang.name }}</p>
-          <p class="language-proficiency">{{ lang.proficiency }}</p>
-        </div>
-        }
-      </div>
-    </div>
-
     <mat-divider></mat-divider>
 
     <p class="last-updated">Last updated: {{ details.lastUpdated }}</p>

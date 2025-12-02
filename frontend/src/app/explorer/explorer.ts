@@ -1,30 +1,89 @@
-import { Component, signal, inject, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, inject, signal, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
+
 import { MatTreeModule, MatTreeNestedDataSource } from '@angular/material/tree';
-import { MatExpansionModule } from '@angular/material/expansion';
+import { NestedTreeControl } from '@angular/cdk/tree';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatChipsModule } from '@angular/material/chips';
+import { MatExpansionModule } from '@angular/material/expansion';
+
 import { DetailView } from './detail-view/detail-view';
-import {
-  CVNode,
-  CVDetails,
-  DateParts,
-  CVExperienceItem,
-  CVEducationItem,
-  SkillItem,
-  Certification,
-  LanguageItem,
-} from '../models/cv.models';
 import { FavoritesService } from '../services/favorites.service';
-import { environment } from '../../environments/environment.development';
-import { CvDto } from '../models/CvDto';
+import { environment } from '../../environments/environment';
+
+/* -----------------------------------------------------------
+   Interfaces
+----------------------------------------------------------- */
+
+export interface CVNode {
+  name: string;
+  type: 'folder' | 'file';
+  id?: string;
+  children?: CVNode[];
+}
+
+export interface DateParts {
+  year?: number;
+  month?: number;
+  day?: number;
+}
+
+export interface CVExperienceItem {
+  company: string;
+  position: string;
+  startDate?: DateParts | null;
+  endDate?: DateParts | null;
+  description?: string;
+  location?: string;
+}
+
+export interface CVEducationItem {
+  institution: string;
+  degree: string;
+  startDate?: DateParts | null;
+  endDate?: DateParts | null;
+  description?: string;
+}
+
+export interface Certification {
+  name: string;
+  issuer?: string;
+  date?: DateParts | null;
+  expiration?: DateParts | null;
+  url?: string;
+}
+
+export interface SkillItem {
+  name: string;
+  level?: number;
+}
+
+export interface CVDetails {
+  id: string;
+  name: string;
+  email?: string;
+  phone?: string;
+  location?: string;
+  summary?: string;
+  experience: CVExperienceItem[];
+  education: CVEducationItem[];
+  certifications: Certification[];
+  skills: SkillItem[];
+  lastUpdated?: string;
+  __favorite?: boolean;
+}
+
+/* -----------------------------------------------------------
+   Component
+----------------------------------------------------------- */
 
 @Component({
   selector: 'app-explorer',
+  standalone: true,
   imports: [
     CommonModule,
     MatTreeModule,
@@ -42,338 +101,244 @@ import { CvDto } from '../models/CvDto';
 export class Explorer implements OnInit {
   private http = inject(HttpClient);
   private cd = inject(ChangeDetectorRef);
-  private favService = inject(FavoritesService);
+  private favorites = inject(FavoritesService);
 
-  private SimpleTreeControl = class<T> {
-    dataNodes: T[] = [];
-    private expanded = new Set<T>();
-    constructor(private childrenAccessor: (node: T) => T[] | undefined | null) {}
-    isExpanded(node: T) {
-      return this.expanded.has(node);
-    }
-    toggle(node: T) {
-      if (this.isExpanded(node)) {
-        this.collapse(node);
-      } else {
-        this.expand(node);
-      }
-    }
-    expand(node: T) {
-      this.expanded.add(node);
-    }
-    collapse(node: T) {
-      this.expanded.delete(node);
-    }
-    expandAll() {
-      const visit = (nodes: T[] | undefined | null) => {
-        if (!nodes) return;
-        for (const n of nodes) {
-          this.expanded.add(n);
-          const children = this.childrenAccessor(n);
-          if (children && children.length) {
-            visit(children);
-          }
-        }
-      };
-      visit(this.dataNodes);
-    }
-    collapseAll() {
-      this.expanded.clear();
-    }
-  };
+  dataSource: CVNode[] = [];
+  treeControl = new NestedTreeControl<CVNode>((node) => node.children);
+  selectedCV = signal<CVNode | null>(null);
+  cvDetails = signal<CVDetails | null>(null);
+  cvDetailsMap = new Map<string, CVDetails>();
 
-  treeControl = new this.SimpleTreeControl<CVNode>((node) => node.children);
-  dataSource = new MatTreeNestedDataSource<CVNode>();
-  childrenAccessor = (node: CVNode) => node.children ?? [];
+  readonly childrenAccessor = (node: CVNode) => node.children ?? [];
 
-  protected readonly selectedCV = signal<CVNode | null>(null);
-  protected readonly cvDetails = signal<CVDetails | null>(null);
-
-  private cvDetailsMap: Map<string, CVDetails> = new Map();
-
-  ngOnInit() {
-    this.loadCVDetails();
+  /* -----------------------------------------------------------
+     Lifecycle
+  ----------------------------------------------------------- */
+  ngOnInit(): void {
+    this.loadCVList();
   }
 
-  private loadCVDetails() {
-    this.http.get<CvDto[]>(`${environment.apiUrl}/api/cvs/all`).subscribe({
-      next: (cvDtos) => {
-        const details = cvDtos.map((dto) => this.mapDtoToDetails(dto));
+  /* -----------------------------------------------------------
+     Load Data
+  ----------------------------------------------------------- */
 
-        details.forEach((cv) => this.cvDetailsMap.set(cv.id, cv));
+  private loadCVList(): void {
+    this.http.get<any[]>(`${environment.apiUrl}/api/cvs/all`).subscribe({
+      next: (dtos) => {
+        const favoritedIds = dtos.filter((d) => d.isFavorited).map((d) => d.id);
+        this.favorites.initialize(favoritedIds);
 
-        const allChildren: CVNode[] = details.map((cv) => ({
-          name: cv.name,
-          type: 'file',
-          id: cv.id,
+        const details = dtos.map((dto) => this.mapDto(dto));
+        details.forEach((d) => this.cvDetailsMap.set(d.id, d));
+
+        const allChildren = details.map((d) => ({
+          name: d.name,
+          type: 'file' as const,
+          id: d.id,
         }));
 
-        const allRoot: CVNode = {
-          name: 'All',
-          type: 'folder',
-          children: allChildren,
-        };
+        const favoriteChildren = allChildren.filter((n) => n.id && this.favorites.isFavorite(n.id));
 
-        const buildAndSetData = () => {
-          const favChildren = allChildren.filter((c) => !!c.id && this.favService.isFavorite(c.id));
-          const favRoot: CVNode = {
-            name: 'Favorites',
-            type: 'folder',
-            children: favChildren,
-          };
-          const data: CVNode[] = [favRoot, allRoot];
-          this.dataSource.data = data;
-          this.treeControl.dataNodes = data;
-        };
+        this.dataSource = [
+          { name: 'Favorites', type: 'folder', children: favoriteChildren },
+          { name: 'All', type: 'folder', children: allChildren },
+        ];
 
-        buildAndSetData();
-
-        this.favService.favorites$.subscribe(() => {
-          buildAndSetData();
-          this.cd.detectChanges();
-        });
-        setTimeout(() => {
-          this.treeControl.expandAll();
-          this.cd.detectChanges();
-        }, 0);
-      },
-      error: (error) => {
-        console.error('Error loading CV details:', error);
+        this.cd.detectChanges();
       },
     });
   }
 
-  private mapDtoToDetails(dto: CvDto): CVDetails {
-    return {
-      id: (dto as any).id ?? dto.Id,
-      name: (dto as any).auteur ?? dto.Auteur ?? 'Unknown',
-      email: (dto as any).email ?? dto.Email,
-      location: (dto as any).adres ?? dto.Adres,
-      summary: (dto as any).inleiding ?? dto.Inleiding,
-      experience:
-        ((dto as any).werkervaringInstances ?? dto.WerkervaringInstances)?.map((exp: string) => ({
-          company: exp,
-          position: '',
-          startDate: null,
-          endDate: null,
-        })) || [],
-      education:
-        ((dto as any).opleidingInstances ?? dto.OpleidingInstances)?.map((edu: string) => ({
-          institution: edu,
-          degree: '',
-          startDate: null,
-          endDate: null,
-        })) || [],
-      certifications:
-        ((dto as any).certificaatInstances ?? dto.CertificaatInstances)?.map((cert: string) => ({
-          name: cert,
-        })) || [],
-      skills: this.mapSkills(dto),
-      languages: [],
-      lastUpdated: (dto as any).lastUpdated ?? (dto as any).LastUpdated ?? dto.LastUpdated,
-    };
-  }
+  /* -----------------------------------------------------------
+     Node Interaction
+  ----------------------------------------------------------- */
 
-  private mapSkills(dto: any): SkillItem[] {
-    const rawList: any[] = (dto?.vaardigheidInstances ?? dto?.VaardigheidInstances ?? []) as any[];
-    if (!Array.isArray(rawList)) return [];
-    const skills = rawList.map((skill: any) => {
-      const rawName = skill?.naam ?? skill?.Naam ?? '';
-      const name = String(rawName ?? '').trim();
-      const levelRaw = skill?.niveau ?? skill?.Niveau ?? skill?.level ?? skill?.Level;
-      const level = levelRaw !== undefined && levelRaw !== null ? Number(levelRaw) : undefined;
-      return { name, level };
-    });
-    const haveNames = skills.some((s) => s.name.length > 0);
-    if (skills.length > 0 && !haveNames) {
-      console.warn('[CV Explorer] Skill names missing. Sample raw skill object:', rawList[0]);
+  toggleNode(node: CVNode, event?: MouseEvent): void {
+    if (event) {
+      event.stopPropagation();
     }
-    return skills;
+    if (this.treeControl.isExpanded(node)) {
+      this.treeControl.collapse(node);
+    } else {
+      this.treeControl.expand(node);
+    }
   }
 
   isFavoriteById(id?: string): boolean {
-    if (!id) return false;
-    return this.favService.isFavorite(id);
+    return id ? this.favorites.isFavorite(id) : false;
   }
 
-  toggleFavoriteFromDetails(cvId?: string, event?: MouseEvent) {
-    if (event) {
-      event.preventDefault();
-      event.stopPropagation();
-    }
-    if (!cvId) return;
-    const newVal = this.favService.toggle(cvId);
-    const det = this.cvDetailsMap.get(cvId);
-    if (det) {
-      (det as any).__favorite = newVal;
-      this.cvDetailsMap.set(cvId, det);
-    }
-    if (this.cvDetails() && this.cvDetails()!.id === cvId) {
-      this.cvDetails.set(this.cvDetailsMap.get(cvId) ?? null);
-    }
-    this.cd.detectChanges();
+  getCVDetails(): CVDetails | null {
+    return this.cvDetails();
   }
 
-  hasChild = (_: number, node: CVNode) => {
-    return node.type === 'folder';
-  };
-
-  toggleNode(node: CVNode, event?: MouseEvent) {
+  onNodeClick(node: CVNode, event?: MouseEvent): void {
     if (event) {
-      event.preventDefault();
-      event.stopPropagation();
-    }
-    this.treeControl.toggle(node as any);
-  }
-
-  toggleFavoriteNode(node: CVNode, event?: MouseEvent) {
-    if (event) {
-      event.preventDefault();
-      event.stopPropagation();
-    }
-    if (!node || !node.id) return;
-    const id = node.id;
-    const newVal = this.favService.toggle(id);
-    const det = this.cvDetailsMap.get(id);
-    if (det) {
-      (det as any).__favorite = newVal;
-      this.cvDetailsMap.set(id, det);
-      if (this.cvDetails() && this.cvDetails()!.id === id) {
-        this.cvDetails.set(det);
-      }
-    }
-    this.cd.detectChanges();
-  }
-
-  onNodeClick(node: CVNode, event?: MouseEvent) {
-    if (event) {
-      const target = event.target as HTMLElement | null;
-      if (target && target.closest('button')) {
-        return;
-      }
-
+      const element = event.target as HTMLElement;
+      if (element.closest('button')) return;
       event.preventDefault();
       event.stopPropagation();
     }
 
     if (node.type === 'file' && node.id) {
-      const cvId = node.id;
       this.selectedCV.set(node);
-      const details = this.cvDetailsMap.get(cvId);
-      this.cvDetails.set(details || null);
+      this.cvDetails.set(this.cvDetailsMap.get(node.id) ?? null);
     }
   }
+
+  toggleFavoriteNode(node: CVNode, event?: MouseEvent): void {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+    if (!node.id) return;
+
+    this.updateFavorite(node.id);
+  }
+
+  toggleFavoriteFromDetails(cvId: string | undefined, event?: MouseEvent): void {
+    if (!cvId) return;
+
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+
+    this.updateFavorite(cvId);
+  }
+
+  private updateFavorite(id: string): void {
+    this.favorites.toggle(id).subscribe((newValue) => {
+      const details = this.cvDetailsMap.get(id);
+
+      if (details) {
+        details.__favorite = newValue;
+        this.cvDetailsMap.set(id, details);
+
+        if (this.cvDetails()?.id === id) {
+          this.cvDetails.set(details);
+        }
+      }
+
+      this.refreshTree();
+      this.cd.detectChanges();
+    });
+  }
+
+  private refreshTree(): void {
+    const allDetails = Array.from(this.cvDetailsMap.values());
+    const allChildren = allDetails.map((d) => ({
+      name: d.name,
+      type: 'file' as const,
+      id: d.id,
+    }));
+
+    const favoriteChildren = allChildren.filter((n) => n.id && this.favorites.isFavorite(n.id));
+
+    const favoritesExpanded = this.dataSource[0]
+      ? this.treeControl.isExpanded(this.dataSource[0])
+      : false;
+    const allExpanded = this.dataSource[1]
+      ? this.treeControl.isExpanded(this.dataSource[1])
+      : false;
+
+    const favoritesNode: CVNode = { name: 'Favorites', type: 'folder', children: favoriteChildren };
+    const allNode: CVNode = { name: 'All', type: 'folder', children: allChildren };
+
+    this.dataSource = [favoritesNode, allNode];
+
+    if (favoritesExpanded) this.treeControl.expand(favoritesNode);
+    if (allExpanded) this.treeControl.expand(allNode);
+  }
+
+  /* -----------------------------------------------------------
+     Helpers
+  ----------------------------------------------------------- */
+
+  hasChild = (_: number, node: CVNode) => node.type === 'folder';
 
   getNodeIcon(node: CVNode): string {
-    if (node.type === 'folder') {
-      return this.treeControl.isExpanded(node) ? 'folder_open' : 'folder';
-    }
-    return 'description';
+    return node.type === 'folder' ? 'folder' : 'description';
   }
 
-  getCVDetails() {
-    return this.cvDetails();
-  }
+  /* -----------------------------------------------------------
+     Data Mapping
+  ----------------------------------------------------------- */
 
-  getPrimaryTitle(details: CVDetails | null): string | null {
-    if (!details || !details.experience || details.experience.length === 0) return null;
-    const e = details.experience[0];
-    const position = e.position ?? '';
-    const company = e.company ? ` • ${e.company}` : '';
-    return `${position}${company}`.trim();
-  }
-
-  formatPeriod(start?: DateParts | null, end?: DateParts | null): string {
-    const fmt = (d?: DateParts | null) => {
-      if (!d) return '';
-      if (d.year && d.month) return `${String(d.year)}-${String(d.month).padStart(2, '0')}`;
-      if (d.year) return String(d.year);
-      return '';
+  private mapDto(dto: any): CVDetails {
+    return {
+      id: dto.id,
+      name: dto.auteur,
+      email: dto.email,
+      phone: dto.telefoonnummer,
+      location: dto.adres,
+      summary: dto.inleiding,
+      experience: (dto.werkervaringInstances ?? []).map((x: any) => ({
+        company: x.organisatie,
+        position: x.rol,
+        startDate: parseDate(x.startdatum),
+        endDate: parseDate(x.einddatum),
+        description: x.beschrijving,
+        location: x.plaats,
+      })),
+      education: (dto.opleidingInstances ?? []).map((x: any) => ({
+        institution: x.instituut,
+        degree: x.naam,
+        startDate: parseDate(x.startdatum),
+        endDate: parseDate(x.einddatum),
+        description: x.beschrijving,
+      })),
+      certifications: (dto.certificaatInstances ?? []).map((x: any) => ({
+        name: x.naam,
+        issuer: x.uitgever,
+        date: parseDate(x.datumAfgifte),
+        expiration: parseDate(x.verloopdatum),
+        url: x.url,
+      })),
+      skills: (dto.vaardigheidInstances ?? []).map((x: any) => ({
+        name: x.naam,
+        level: x.niveau,
+      })),
+      lastUpdated: dto.lastUpdated,
+      __favorite: dto.isFavorited,
     };
-    const s = fmt(start);
-    const e = fmt(end);
-    if (!s && !e) return '';
-    if (!e) return `${s} — Heden`;
-    if (!s) return e;
-    return `${s} — ${e}`;
   }
 
-  formatEducationYear(edu: CVEducationItem | undefined): string {
-    if (!edu) return '';
-    if (edu.endDate && edu.endDate.year) return String(edu.endDate.year);
-    if (edu.startDate && edu.startDate.year) return String(edu.startDate.year);
-    return '';
+  getSkills(d: CVDetails | null): SkillItem[] {
+    return d?.skills ?? [];
   }
 
-  formatCertificationDate(cert: Certification | undefined): string {
-    if (!cert || !cert.date) return '';
-    const d = cert.date;
-    if (d.year && d.month && d.day)
-      return `${d.year}-${String(d.month).padStart(2, '0')}-${String(d.day).padStart(2, '0')}`;
-    if (d.year && d.month) return `${d.year}-${String(d.month).padStart(2, '0')}`;
-    if (d.year) return String(d.year);
-    return '';
+  getEducation(d: CVDetails | null): CVEducationItem[] {
+    return d?.education ?? [];
   }
 
-  getExperience(details: CVDetails | null): CVExperienceItem[] {
-    return details?.experience ?? [];
+  getCertifications(d: CVDetails | null): Certification[] {
+    return d?.certifications ?? [];
   }
+}
 
-  getSkills(details: CVDetails | null): SkillItem[] {
-    return details?.skills ?? [];
-  }
+/* -----------------------------------------------------------
+   Utility
+----------------------------------------------------------- */
 
-  getEducation(details: CVDetails | null): CVEducationItem[] {
-    return details?.education ?? [];
-  }
+function parseDate(value: string | null | undefined): DateParts | null {
+  if (!value) return null;
 
-  getCertifications(details: CVDetails | null): Certification[] {
-    return details?.certifications ?? [];
-  }
+  // yyyy-mm-dd
+  const iso = value.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (iso) return { year: +iso[1], month: +iso[2], day: +iso[3] };
 
-  getLanguages(details: CVDetails | null): LanguageItem[] {
-    const raw: any = (details as any)?.languages ?? [];
-    if (!raw || raw.length === 0) return [];
-    if (typeof raw[0] === 'string') {
-      return raw.map((s: string) => ({ name: s }));
-    }
-    return raw as LanguageItem[];
-  }
+  // dd-mm-yyyy
+  const dmy = value.match(/^(\d{2})-(\d{2})-(\d{4})$/);
+  if (dmy) return { year: +dmy[3], month: +dmy[2], day: +dmy[1] };
 
-  formatLanguage(lang: any): string {
-    if (!lang) return '';
-    if (typeof lang === 'string') return lang;
-    const prof = lang.proficiency ? ` • ${lang.proficiency}` : '';
-    return `${lang.name}${prof}`;
-  }
+  // mm-yyyy
+  const my = value.match(/^(\d{2})-(\d{4})$/);
+  if (my) return { year: +my[2], month: +my[1] };
 
-  formatExperiencePeriod(exp: any): string {
-    if (!exp) return '';
-    const p = this.formatPeriod(exp.startDate, exp.endDate);
-    if (p) return p;
-    return exp.period ?? '';
-  }
+  // yyyy
+  const y = value.match(/^(\d{4})$/);
+  if (y) return { year: +y[1] };
 
-  formatSkillLabel(skill: any): string {
-    if (!skill) return '';
-    if (typeof skill === 'object') {
-      const label = String(skill.name ?? '').trim();
-      if (label.length > 0) return label;
-      return '(Onbekende vaardigheid)';
-    }
-    return String(skill);
-  }
-
-  formatSkillLevel(skill: any): string {
-    if (!skill) return '';
-    if (typeof skill === 'object' && skill.level !== undefined && skill.level !== null) {
-      return `(${skill.level})`;
-    }
-    return '';
-  }
-
-  skillDotStates(level?: number): boolean[] {
-    const l = Math.max(0, Math.min(5, Number(level) || 0));
-    return Array.from({ length: 5 }, (_, i) => i < l);
-  }
+  return null;
 }

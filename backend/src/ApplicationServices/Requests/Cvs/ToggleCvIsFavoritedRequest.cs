@@ -1,6 +1,6 @@
 ﻿using MediatR;
 
-namespace CvViewer.ApplicationServices.Requests;
+namespace CvViewer.ApplicationServices.Requests.Cvs;
 
 public sealed record ToggleCvIsFavoritedRequest : IRequest<bool?>
 {
