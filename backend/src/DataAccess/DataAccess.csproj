@@ -24,4 +24,10 @@
     <ItemGroup>
       <ProjectReference Include="..\ApplicationServices\ApplicationServices.csproj" />
     </ItemGroup>
+	
+    <ItemGroup>
+      <None Update="Seeder\cv-details.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
 </Project>
