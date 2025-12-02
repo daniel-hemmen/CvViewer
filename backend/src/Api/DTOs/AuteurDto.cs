@@ -1,9 +1,8 @@
 ﻿namespace CvViewer.Api.DTOs;
 
-public sealed record AuteurDto()
-{
-    public required string Naam { get; init; }
-    public string? Email { get; set; }
-    public string? Telefoonnummer { get; set; }
-    public string? LinkedInUrl { get; set; }
-}
+public sealed record AuteurDto(
+    string Naam,
+    string? Email,
+    string? Telefoonnummer,
+    string? LinkedInUrl
+    );

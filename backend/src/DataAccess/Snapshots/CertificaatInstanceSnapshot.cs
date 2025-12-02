@@ -1,13 +1,12 @@
-
-
+using CvViewer.Types;
 
 namespace CvViewer.DataAccess.Snapshots;
 
 public class CertificaatInstanceSnapshot
 {
-    public string? Naam { get; set; }
-    public string? Uitgever { get; set; }
-    public DateOnly? DatumAfgifte { get; set; }
-    public DateOnly? Verloopdatum { get; set; }
+    public required string Naam { get; set; }
+    public required string Uitgever { get; set; }
+    public DateParts DatumAfgifte { get; set; }
+    public DateParts? Verloopdatum { get; set; }
     public string? Url { get; set; }
 }

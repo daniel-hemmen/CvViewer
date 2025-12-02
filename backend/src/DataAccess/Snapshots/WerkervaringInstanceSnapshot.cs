@@ -1,14 +1,13 @@
-
-
+using CvViewer.Types;
 
 namespace CvViewer.DataAccess.Snapshots;
 
 public class WerkervaringInstanceSnapshot
 {
-    public required string Bedrijfsnaam { get; init; }
-    public required string Functietitel { get; init; }
-    public DateOnly Startdatum { get; init; }
-    public DateOnly? Einddatum { get; init; }
-    public string? Locatie { get; init; }
+    public required string Rol { get; init; }
+    public required string Organisatie { get; init; }
+    public DateParts Startdatum { get; init; }
+    public DateParts? Einddatum { get; init; }
     public string? Beschrijving { get; init; }
+    public string? Plaats { get; init; }
 }

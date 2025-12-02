@@ -1,5 +1,6 @@
 using CvViewer.Domain;
 using NodaTime;
+using CvViewer.Types;
 
 namespace CvViewer.Test.Shared.Builder;
 
@@ -49,26 +50,26 @@ public sealed class CvBuilder
             .WithInleiding("Gedreven software engineer met ervaring in .NET en cloud")
             .AddWerkervaringInstances(new WerkervaringInstance
             {
-                Bedrijfsnaam = "Contoso",
-                Functietitel = "Senior Developer",
-                Startdatum = DateOnly.FromDateTime(DateTime.UtcNow.AddYears(-3)),
+                Organisatie = "Contoso",
+                Rol = "Senior Developer",
+                Startdatum = new DateParts(DateTime.UtcNow.Year - 3, DateTime.UtcNow.Month, DateTime.UtcNow.Day),
                 Einddatum = null,
-                Locatie = "Amsterdam",
+                Plaats = "Amsterdam",
                 Beschrijving = "Leiding over backend team en architectuur"
             })
             .AddOpleidingInstances(new OpleidingInstance
             {
                 Naam = "Computer Science",
                 Instituut = "Universiteit van Amsterdam",
-                Startdatum = DateOnly.FromDateTime(DateTime.UtcNow.AddYears(-10)),
-                Einddatum = DateOnly.FromDateTime(DateTime.UtcNow.AddYears(-6)),
+                Startdatum = new DateParts(DateTime.UtcNow.Year - 10, DateTime.UtcNow.Month, DateTime.UtcNow.Day),
+                Einddatum = new DateParts(DateTime.UtcNow.Year - 6, DateTime.UtcNow.Month, DateTime.UtcNow.Day),
                 Beschrijving = "Bachelor of Science"
             })
             .AddCertificaatInstances(new CertificaatInstance
             {
                 Naam = "Azure Developer Associate",
                 Uitgever = "Microsoft",
-                DatumAfgifte = DateOnly.FromDateTime(DateTime.UtcNow.AddYears(-1)),
+                DatumAfgifte = new DateParts(DateTime.UtcNow.Year - 1, DateTime.UtcNow.Month, DateTime.UtcNow.Day),
                 Verloopdatum = null,
                 Url = "https://learn.microsoft.com"
             })

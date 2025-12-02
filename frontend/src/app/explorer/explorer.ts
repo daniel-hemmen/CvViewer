@@ -21,20 +21,7 @@ import {
 } from '../models/cv.models';
 import { FavoritesService } from '../services/favorites.service';
 import { environment } from '../../environments/environment.development';
-
-interface CvDto {
-  id: string;
-  auteur?: string;
-  email?: string;
-  adres?: string;
-  inleiding?: string;
-  werkervaringInstances?: string[];
-  opleidingInstances?: string[];
-  certificaatInstances?: string[];
-  vaardigheidInstances?: { beschrijving: string; niveau: number }[];
-  isFavorite?: boolean;
-  lastUpdated?: string;
-}
+import { CvDto } from '../models/CvDto';
 
 @Component({
   selector: 'app-explorer',
@@ -158,37 +145,50 @@ export class Explorer implements OnInit {
 
   private mapDtoToDetails(dto: CvDto): CVDetails {
     return {
-      id: dto.id,
-      name: dto.auteur || 'Unknown',
-      email: dto.email,
-      location: dto.adres,
-      summary: dto.inleiding,
+      id: (dto as any).id ?? dto.Id,
+      name: (dto as any).auteur ?? dto.Auteur ?? 'Unknown',
+      email: (dto as any).email ?? dto.Email,
+      location: (dto as any).adres ?? dto.Adres,
+      summary: (dto as any).inleiding ?? dto.Inleiding,
       experience:
-        dto.werkervaringInstances?.map((exp) => ({
+        ((dto as any).werkervaringInstances ?? dto.WerkervaringInstances)?.map((exp: string) => ({
           company: exp,
           position: '',
           startDate: null,
           endDate: null,
         })) || [],
       education:
-        dto.opleidingInstances?.map((edu) => ({
+        ((dto as any).opleidingInstances ?? dto.OpleidingInstances)?.map((edu: string) => ({
           institution: edu,
           degree: '',
           startDate: null,
           endDate: null,
         })) || [],
       certifications:
-        dto.certificaatInstances?.map((cert) => ({
+        ((dto as any).certificaatInstances ?? dto.CertificaatInstances)?.map((cert: string) => ({
           name: cert,
         })) || [],
-      skills:
-        dto.vaardigheidInstances?.map((skill) => ({
-          name: skill.beschrijving,
-          level: skill.niveau,
-        })) || [],
+      skills: this.mapSkills(dto),
       languages: [],
-      lastUpdated: dto.lastUpdated,
+      lastUpdated: (dto as any).lastUpdated ?? (dto as any).LastUpdated ?? dto.LastUpdated,
     };
+  }
+
+  private mapSkills(dto: any): SkillItem[] {
+    const rawList: any[] = (dto?.vaardigheidInstances ?? dto?.VaardigheidInstances ?? []) as any[];
+    if (!Array.isArray(rawList)) return [];
+    const skills = rawList.map((skill: any) => {
+      const rawName = skill?.naam ?? skill?.Naam ?? '';
+      const name = String(rawName ?? '').trim();
+      const levelRaw = skill?.niveau ?? skill?.Niveau ?? skill?.level ?? skill?.Level;
+      const level = levelRaw !== undefined && levelRaw !== null ? Number(levelRaw) : undefined;
+      return { name, level };
+    });
+    const haveNames = skills.some((s) => s.name.length > 0);
+    if (skills.length > 0 && !haveNames) {
+      console.warn('[CV Explorer] Skill names missing. Sample raw skill object:', rawList[0]);
+    }
+    return skills;
   }
 
   isFavoriteById(id?: string): boolean {
@@ -356,13 +356,19 @@ export class Explorer implements OnInit {
 
   formatSkillLabel(skill: any): string {
     if (!skill) return '';
-    if (typeof skill === 'object') return skill.name ?? JSON.stringify(skill);
+    if (typeof skill === 'object') {
+      const label = String(skill.name ?? '').trim();
+      if (label.length > 0) return label;
+      return '(Onbekende vaardigheid)';
+    }
     return String(skill);
   }
 
   formatSkillLevel(skill: any): string {
     if (!skill) return '';
-    if (typeof skill === 'object' && skill.level) return `(${skill.level})`;
+    if (typeof skill === 'object' && skill.level !== undefined && skill.level !== null) {
+      return `(${skill.level})`;
+    }
     return '';
   }
 
