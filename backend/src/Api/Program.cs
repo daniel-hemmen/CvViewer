@@ -37,7 +37,7 @@ public partial class Program
         var connectionString = Environment.GetEnvironmentVariable("AZURE_SQL_CONNECTIONSTRING")
             ?? builder.Configuration.GetConnectionString("DefaultConnection");
 
-        var storageUrl = Environment.GetEnvironmentVariable("BLOB_STORAGE_URL")
+        var storageUrl = Environment.GetEnvironmentVariable("AZURE_STORAGEBLOB_RESOURCEENDPOINT")
             ?? builder.Configuration.GetValue<string>("BlobStorageUrl")
             ?? throw new InvalidOperationException("No storage url configured");
 
