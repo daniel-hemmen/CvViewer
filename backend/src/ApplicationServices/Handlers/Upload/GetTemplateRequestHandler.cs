@@ -26,7 +26,7 @@ namespace CvViewer.ApplicationServices.Handlers.Upload
                 return new DownloadResult(
                     downloadResult.Value.Content.ToStream(),
                     Constants.TemplateFileName,
-                    downloadResult.Value.Details.ContentType ?? "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+                    downloadResult.Value.Details.ContentType ?? "application/vnd.openxmlformats-officedocument.spreadsheetml.template");
             }
             catch (RequestFailedException)
             {
