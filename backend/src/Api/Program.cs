@@ -55,6 +55,8 @@ public partial class Program
 
         app.UseHttpsRedirection();
 
+        app.UseHealthChecks("/health");
+
         app.UseCors("AllowFrontend");
 
         app.UseAuthentication();
