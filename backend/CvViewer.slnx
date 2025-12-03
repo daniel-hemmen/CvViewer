@@ -5,7 +5,6 @@
     <Project Path="test/DataAccess.Tests/DataAccess.Tests.csproj" />
     <Project Path="test/Domain.Tests/Domain.Tests.csproj" />
     <Project Path="test/Test.Shared/Test.Shared.csproj" Id="4ce6619f-d59a-4b25-86b3-0667ff84979f" />
-    <Project Path="test/Types.Tests/Types.Tests.csproj" />
   </Folder>
   <Folder Name="/_SolutionItems/">
     <File Path=".editorconfig" />
