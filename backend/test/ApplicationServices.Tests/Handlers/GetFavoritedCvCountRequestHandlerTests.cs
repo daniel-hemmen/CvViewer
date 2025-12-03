@@ -19,7 +19,7 @@ public sealed class GetFavoritedCvCountRequestHandlerTests
         // Arrange
         var handler = new GetFavoritedCvCountRequestHandler(_cvRepository);
 
-        var request = new GetFavoritedCvCountRequest();
+        var request = new GetFavoritedCvCountQuery();
 
         Mock.Get(_cvRepository)
             .Setup(repo => repo.GetFavoritedCvCountAsync(It.IsAny<CancellationToken>()))

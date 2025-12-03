@@ -3,4 +3,4 @@ using MediatR;
 
 namespace CvViewer.ApplicationServices.Requests.Cvs;
 
-public sealed record GetAllCvsRequest : IRequest<List<Cv>?>;
+public sealed record GetAllCvsQuery : IRequest<List<Cv>?>;

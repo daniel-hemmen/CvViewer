@@ -1,37 +1,37 @@
 ﻿using Azure;
 using Azure.Storage.Blobs;
+using CvViewer.ApplicationServices.DTOs;
 using CvViewer.ApplicationServices.Requests.Upload;
 using MediatR;
 
-namespace CvViewer.ApplicationServices.Handlers.Upload
+namespace CvViewer.ApplicationServices.Handlers.Upload;
+
+public sealed class GetTemplateRequestHandler : IRequestHandler<GetTemplateQuery, BlobDownloadResultDto?>
 {
-    public sealed class GetTemplateRequestHandler : IRequestHandler<GetTemplateRequest, DownloadResult?>
+    private readonly BlobServiceClient _blobServiceClient;
+
+    public GetTemplateRequestHandler(BlobServiceClient blobServiceClient)
     {
-        private readonly BlobServiceClient _blobServiceClient;
+        _blobServiceClient = blobServiceClient;
+    }
 
-        public GetTemplateRequestHandler(BlobServiceClient blobServiceClient)
+    public async Task<BlobDownloadResultDto?> Handle(GetTemplateQuery _, CancellationToken cancellationToken)
+    {
+        var container = _blobServiceClient.GetBlobContainerClient(Constants.TemplatesContainerName);
+        var blob = container.GetBlobClient(Constants.TemplateFileName);
+
+        try
         {
-            _blobServiceClient = blobServiceClient;
+            var downloadResult = await blob.DownloadContentAsync(cancellationToken);
+
+            return new BlobDownloadResultDto(
+                downloadResult.Value.Content.ToStream(),
+                Constants.TemplateFileName,
+                downloadResult.Value.Details.ContentType ?? "application/vnd.openxmlformats-officedocument.spreadsheetml.template");
         }
-
-        public async Task<DownloadResult?> Handle(GetTemplateRequest _, CancellationToken cancellationToken)
+        catch (RequestFailedException)
         {
-            var container = _blobServiceClient.GetBlobContainerClient(Constants.TemplatesContainerName);
-            var blob = container.GetBlobClient(Constants.TemplateFileName);
-
-            try
-            {
-                var downloadResult = await blob.DownloadContentAsync(cancellationToken);
-
-                return new DownloadResult(
-                    downloadResult.Value.Content.ToStream(),
-                    Constants.TemplateFileName,
-                    downloadResult.Value.Details.ContentType ?? "application/vnd.openxmlformats-officedocument.spreadsheetml.template");
-            }
-            catch (RequestFailedException)
-            {
-                return null;
-            }
+            return null;
         }
     }
 }

@@ -2,4 +2,4 @@
 
 namespace CvViewer.ApplicationServices.Requests.Cvs;
 
-public sealed record GetFavoritedCvCountRequest : IRequest<int?>;
+public sealed record GetFavoritedCvCountQuery : IRequest<int?>;

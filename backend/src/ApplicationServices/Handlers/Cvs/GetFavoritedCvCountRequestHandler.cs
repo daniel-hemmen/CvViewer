@@ -3,7 +3,7 @@ using MediatR;
 
 namespace CvViewer.ApplicationServices.Handlers.Cvs;
 
-public sealed class GetFavoritedCvCountRequestHandler : IRequestHandler<GetFavoritedCvCountRequest, int?>
+public sealed class GetFavoritedCvCountRequestHandler : IRequestHandler<GetFavoritedCvCountQuery, int?>
 {
     private readonly ICvRepository _cvRepository;
 
@@ -12,6 +12,6 @@ public sealed class GetFavoritedCvCountRequestHandler : IRequestHandler<GetFavor
         _cvRepository = cvRepository;
     }
 
-    public async Task<int?> Handle(GetFavoritedCvCountRequest _, CancellationToken cancellationToken)
+    public async Task<int?> Handle(GetFavoritedCvCountQuery _, CancellationToken cancellationToken)
         => await _cvRepository.GetFavoritedCvCountAsync(cancellationToken);
 }
