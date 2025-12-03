@@ -28,27 +28,27 @@ public sealed class CvFileReader : ICvFileReader
     }
 
     private static MetaDto ReadMeta(IXLWorksheet worksheet)
-        => new(Inleiding: worksheet.GetTextFromCellBelow(nameof(MetaDto.Inleiding)));
+        => new(Inleiding: worksheet.GetTextFromCellBelow(nameof(MetaDto.Inleiding)) ?? "");
 
     private static AdresDto ReadAdres(IXLWorksheet worksheet)
         => new(
-            Straat: worksheet.GetTextFromCellBelow(nameof(AdresDto.Straat)),
-            Huisnummer: worksheet.GetTextFromCellBelow(nameof(AdresDto.Huisnummer)),
-            Plaats: worksheet.GetTextFromCellBelow(nameof(AdresDto.Plaats)),
-            Postcode: worksheet.GetTextFromCellBelow(nameof(AdresDto.Postcode)),
-            Land: worksheet.GetTextFromCellBelow(nameof(AdresDto.Land)));
+            Straat: worksheet.GetTextFromCellBelow(nameof(AdresDto.Straat)) ?? "",
+            Huisnummer: worksheet.GetTextFromCellBelow(nameof(AdresDto.Huisnummer)) ?? "",
+            Plaats: worksheet.GetTextFromCellBelow(nameof(AdresDto.Plaats)) ?? "",
+            Postcode: worksheet.GetTextFromCellBelow(nameof(AdresDto.Postcode)) ?? "",
+            Land: worksheet.GetTextFromCellBelow(nameof(AdresDto.Land)) ?? "");
 
     private static AuteurDto ReadAuteur(IXLWorksheet worksheet)
         => new(
-            Voornaam: worksheet.GetTextFromCellBelow(nameof(AuteurDto.Voornaam)),
-            Tussenvoegsel: worksheet.GetTextFromCellBelow(nameof(AuteurDto.Tussenvoegsel)),
-            Achternaam: worksheet.GetTextFromCellBelow(nameof(AuteurDto.Achternaam)));
+            Voornaam: worksheet.GetTextFromCellBelow(nameof(AuteurDto.Voornaam)) ?? "",
+            Tussenvoegsel: worksheet.GetTextFromCellBelow(nameof(AuteurDto.Tussenvoegsel)) ?? "",
+            Achternaam: worksheet.GetTextFromCellBelow(nameof(AuteurDto.Achternaam)) ?? "");
 
     private static ContactgegevensDto ReadContactGegevens(IXLWorksheet worksheet)
         => new(
-            Email: worksheet.GetTextFromCellBelow(nameof(ContactgegevensDto.Email)),
-            Telefoonnummer: worksheet.GetTextFromCellBelow(nameof(ContactgegevensDto.Telefoonnummer)),
-            LinkedinUrl: worksheet.GetTextFromCellBelow(nameof(ContactgegevensDto.LinkedinUrl)));
+            Email: worksheet.GetTextFromCellBelow(nameof(ContactgegevensDto.Email)) ?? "",
+            Telefoonnummer: worksheet.GetTextFromCellBelow(nameof(ContactgegevensDto.Telefoonnummer)) ?? "",
+            LinkedinUrl: worksheet.GetTextFromCellBelow(nameof(ContactgegevensDto.LinkedinUrl)) ?? "");
 
     private static List<CertificaatDto> ReadCertificaten(IXLWorksheet worksheet)
     {
@@ -61,15 +61,15 @@ public sealed class CvFileReader : ICvFileReader
             var rowNumber = row.RowNumber();
 
             var certificaat = new CertificaatDto(
-                Naam: worksheet.GetTextByHeaderAndRowNumber(nameof(CertificaatDto.Naam), rowNumber),
-                Uitgever: worksheet.GetTextByHeaderAndRowNumber(nameof(CertificaatDto.Uitgever), rowNumber),
+                Naam: worksheet.GetTextByHeaderAndRowNumber(nameof(CertificaatDto.Naam), rowNumber) ?? "",
+                Uitgever: worksheet.GetTextByHeaderAndRowNumber(nameof(CertificaatDto.Uitgever), rowNumber) ?? "",
                 DatumAfgifteDag: worksheet.GetNumberByHeaderAndRowNumber(nameof(CertificaatDto.DatumAfgifteDag), rowNumber),
                 DatumAfgifteMaand: worksheet.GetNumberByHeaderAndRowNumber(nameof(CertificaatDto.DatumAfgifteMaand), rowNumber),
                 DatumAfgifteJaar: worksheet.GetNumberByHeaderAndRowNumber(nameof(CertificaatDto.DatumAfgifteJaar), rowNumber)!.Value,
                 VerloopdatumDag: worksheet.GetNumberByHeaderAndRowNumber(nameof(CertificaatDto.VerloopdatumDag), rowNumber),
                 VerloopdatumMaand: worksheet.GetNumberByHeaderAndRowNumber(nameof(CertificaatDto.VerloopdatumMaand), rowNumber),
                 VerloopdatumJaar: worksheet.GetNumberByHeaderAndRowNumber(nameof(CertificaatDto.VerloopdatumJaar), rowNumber),
-                Url: worksheet.GetTextByHeaderAndRowNumber(nameof(CertificaatDto.Url), rowNumber));
+                Url: worksheet.GetTextByHeaderAndRowNumber(nameof(CertificaatDto.Url), rowNumber) ?? "");
 
             certificaten.Add(certificaat);
         }
@@ -88,15 +88,15 @@ public sealed class CvFileReader : ICvFileReader
             var rowNumber = row.RowNumber();
 
             var opleiding = new OpleidingDto(
-                Naam: worksheet.GetTextByHeaderAndRowNumber(nameof(OpleidingDto.Naam), rowNumber),
-                Instituut: worksheet.GetTextByHeaderAndRowNumber(nameof(OpleidingDto.Instituut), rowNumber),
+                Naam: worksheet.GetTextByHeaderAndRowNumber(nameof(OpleidingDto.Naam), rowNumber) ?? "",
+                Instituut: worksheet.GetTextByHeaderAndRowNumber(nameof(OpleidingDto.Instituut), rowNumber) ?? "",
                 StartdatumDag: worksheet.GetNumberByHeaderAndRowNumber(nameof(OpleidingDto.StartdatumDag), rowNumber),
                 StartdatumMaand: worksheet.GetNumberByHeaderAndRowNumber(nameof(OpleidingDto.StartdatumMaand), rowNumber),
                 StartdatumJaar: worksheet.GetNumberByHeaderAndRowNumber(nameof(OpleidingDto.StartdatumJaar), rowNumber),
                 EinddatumDag: worksheet.GetNumberByHeaderAndRowNumber(nameof(OpleidingDto.EinddatumDag), rowNumber),
                 EinddatumMaand: worksheet.GetNumberByHeaderAndRowNumber(nameof(OpleidingDto.EinddatumMaand), rowNumber),
                 EinddatumJaar: worksheet.GetNumberByHeaderAndRowNumber(nameof(OpleidingDto.EinddatumJaar), rowNumber)!.Value,
-                Beschrijving: worksheet.GetTextByHeaderAndRowNumber(nameof(OpleidingDto.Beschrijving), rowNumber));
+                Beschrijving: worksheet.GetTextByHeaderAndRowNumber(nameof(OpleidingDto.Beschrijving), rowNumber) ?? "");
 
             opleidingen.Add(opleiding);
         }
@@ -115,7 +115,7 @@ public sealed class CvFileReader : ICvFileReader
             var rowNumber = row.RowNumber();
 
             var vaardigheid = new VaardigheidDto(
-                Naam: worksheet.GetTextByHeaderAndRowNumber(nameof(VaardigheidDto.Naam), rowNumber),
+                Naam: worksheet.GetTextByHeaderAndRowNumber(nameof(VaardigheidDto.Naam), rowNumber) ?? "",
                 Niveau: worksheet.GetNumberByHeaderAndRowNumber(nameof(VaardigheidDto.Niveau), rowNumber)!.Value);
 
             vaardigheden.Add(vaardigheid);
@@ -135,16 +135,16 @@ public sealed class CvFileReader : ICvFileReader
             var rowNumber = row.RowNumber();
 
             var werkervaring = new WerkervaringDto(
-                Rol: worksheet.GetTextByHeaderAndRowNumber(nameof(WerkervaringDto.Rol), rowNumber),
-                Organisatie: worksheet.GetTextByHeaderAndRowNumber(nameof(WerkervaringDto.Organisatie), rowNumber),
+                Rol: worksheet.GetTextByHeaderAndRowNumber(nameof(WerkervaringDto.Rol), rowNumber) ?? "",
+                Organisatie: worksheet.GetTextByHeaderAndRowNumber(nameof(WerkervaringDto.Organisatie), rowNumber) ?? "",
                 StartdatumDag: worksheet.GetNumberByHeaderAndRowNumber(nameof(WerkervaringDto.StartdatumDag), rowNumber),
                 StartdatumMaand: worksheet.GetNumberByHeaderAndRowNumber(nameof(WerkervaringDto.StartdatumMaand), rowNumber),
                 StartdatumJaar: worksheet.GetNumberByHeaderAndRowNumber(nameof(WerkervaringDto.StartdatumJaar), rowNumber)!.Value,
                 EinddatumDag: worksheet.GetNumberByHeaderAndRowNumber(nameof(WerkervaringDto.EinddatumDag), rowNumber),
                 EinddatumMaand: worksheet.GetNumberByHeaderAndRowNumber(nameof(WerkervaringDto.EinddatumMaand), rowNumber),
                 EinddatumJaar: worksheet.GetNumberByHeaderAndRowNumber(nameof(WerkervaringDto.EinddatumJaar), rowNumber),
-                Beschrijving: worksheet.GetTextByHeaderAndRowNumber(nameof(WerkervaringDto.Beschrijving), rowNumber),
-                Plaats: worksheet.GetTextByHeaderAndRowNumber(nameof(WerkervaringDto.Plaats), rowNumber));
+                Beschrijving: worksheet.GetTextByHeaderAndRowNumber(nameof(WerkervaringDto.Beschrijving), rowNumber) ?? "",
+                Plaats: worksheet.GetTextByHeaderAndRowNumber(nameof(WerkervaringDto.Plaats), rowNumber) ?? "");
 
             werkervaringen.Add(werkervaring);
         }
