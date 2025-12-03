@@ -4,4 +4,4 @@ using NodaTime;
 
 namespace CvViewer.ApplicationServices.Requests.Cvs;
 
-public sealed record GetCvsUpdatedSinceRequest(Instant Since) : IRequest<List<Cv>?>;
+public sealed record GetCvsUpdatedSinceQuery(Instant Since) : IRequest<List<Cv>?>;

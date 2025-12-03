@@ -33,7 +33,7 @@ public sealed class GetCvsUpdatedSinceRequestHandlerTests
             .Setup(repo => repo.GetCvsUpdatedSinceAsync(since, It.IsAny<CancellationToken>()))
             .ReturnsAsync(expected);
 
-        var request = new GetCvsUpdatedSinceRequest(since);
+        var request = new GetCvsUpdatedSinceQuery(since);
 
         // Act
         var actual = await handler.Handle(request, CancellationToken.None);

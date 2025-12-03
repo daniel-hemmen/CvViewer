@@ -3,7 +3,7 @@ using MediatR;
 
 namespace CvViewer.ApplicationServices.Handlers.Cvs;
 
-public sealed class GetTotalCvCountRequestHandler : IRequestHandler<GetTotalCvCountRequest, int?>
+public sealed class GetTotalCvCountRequestHandler : IRequestHandler<GetTotalCvCountQuery, int?>
 {
     private readonly ICvRepository _cvRepository;
 
@@ -12,6 +12,6 @@ public sealed class GetTotalCvCountRequestHandler : IRequestHandler<GetTotalCvCo
         _cvRepository = cvRepository;
     }
 
-    public async Task<int?> Handle(GetTotalCvCountRequest _, CancellationToken cancellationToken)
+    public async Task<int?> Handle(GetTotalCvCountQuery _, CancellationToken cancellationToken)
         => await _cvRepository.GetTotalCvCountAsync(cancellationToken);
 }

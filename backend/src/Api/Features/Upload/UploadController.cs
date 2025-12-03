@@ -1,4 +1,5 @@
-﻿using CvViewer.ApplicationServices.Handlers.Upload;
+﻿using CvViewer.Api.Validators;
+using CvViewer.ApplicationServices.DTOs;
 using CvViewer.ApplicationServices.Requests.Upload;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -17,13 +18,28 @@ public class UploadController : ControllerBase
     }
 
     [HttpGet("/api/[controller]/template")]
-    public async Task<IResult> GetUploadTemplate(CancellationToken cancellationToken)
-        => await GetResponse<GetTemplateRequest, DownloadResult?>(new(), cancellationToken) is DownloadResult downloadResult
+    public async Task<IResult> GetUploadTemplateAsync(CancellationToken cancellationToken)
+        => await GetResponse<GetTemplateQuery, BlobDownloadResultDto?>(new(), cancellationToken) is BlobDownloadResultDto downloadResult
             ? Results.File(
                 downloadResult.Content,
                 downloadResult.ContentType,
                 downloadResult.FileName)
             : Results.NotFound();
+
+    [HttpPost("/api/[controller]")]
+    public async Task<IResult> AddCvFromFileAsync(IFormFile cvFile, CancellationToken cancellationToken)
+    {
+        if (!CvFileValidator.TryValidate(cvFile, out var problemDetails))
+        {
+            return Results.Problem(problemDetails);
+        }
+
+        await using var stream = cvFile.OpenReadStream();
+
+        var success = await _mediator.Send(new AddCvFromFileCommand(stream), cancellationToken);
+
+        return Results.Ok(); // TODO: return proper thing
+    }
 
     private async Task<TResponse> GetResponse<TRequest, TResponse>(TRequest request, CancellationToken cancellationToken)
         where TRequest : IRequest<TResponse>

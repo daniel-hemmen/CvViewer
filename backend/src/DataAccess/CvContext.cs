@@ -2,7 +2,6 @@
 using CvViewer.DataAccess.Configurations;
 using CvViewer.DataAccess.Converters;
 using CvViewer.DataAccess.Entities;
-using CvViewer.DataAccess.Seeder;
 using Microsoft.EntityFrameworkCore;
 
 namespace CvViewer.DataAccess;
@@ -64,24 +63,4 @@ public class CvContext(DbContextOptions<CvContext> options) : DbContext(options)
                 .SetValueComparer(DatePartsConverter.NullableValueComparer);
         });
     }
-
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder
-            .UseSeeding((context, _) =>
-            {
-                var cvs = context.Set<CvEntity>().FirstOrDefault();
-                if (cvs == null)
-                {
-                    DatabaseSeeder.Seed((CvContext)context);
-                }
-            })
-            .UseAsyncSeeding(async (context, _, cancellationToken) =>
-            {
-                var cvs = await context.Set<CvEntity>().FirstOrDefaultAsync(cancellationToken);
-
-                if (cvs == null)
-                {
-                    await DatabaseSeeder.SeedAsync((CvContext)context, cancellationToken);
-                }
-            });
 }

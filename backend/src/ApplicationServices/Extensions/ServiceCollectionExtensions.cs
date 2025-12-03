@@ -1,5 +1,6 @@
 ﻿using Azure.Identity;
 using Azure.Storage.Blobs;
+using CvViewer.ApplicationServices.FileReader;
 using CvViewer.ApplicationServices.Handlers.Cvs;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -11,6 +12,7 @@ public static class ServiceCollectionExtensions
     {
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GetFavoritedCvCountRequestHandler).Assembly));
 
+        services.AddSingleton<ICvFileReader, CvFileReader>();
         services.AddScoped(_ => new BlobServiceClient(new Uri(storageUrl), new DefaultAzureCredential()));
 
         return services;

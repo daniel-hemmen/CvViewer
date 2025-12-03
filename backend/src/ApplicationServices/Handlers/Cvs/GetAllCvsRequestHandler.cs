@@ -4,7 +4,7 @@ using MediatR;
 
 namespace CvViewer.ApplicationServices.Handlers.Cvs;
 
-public sealed class GetAllCvsRequestHandler : IRequestHandler<GetAllCvsRequest, List<Cv>?>
+public sealed class GetAllCvsRequestHandler : IRequestHandler<GetAllCvsQuery, List<Cv>?>
 {
     private readonly ICvRepository _cvRepository;
 
@@ -13,6 +13,6 @@ public sealed class GetAllCvsRequestHandler : IRequestHandler<GetAllCvsRequest, 
         _cvRepository = cvRepository;
     }
 
-    public async Task<List<Cv>?> Handle(GetAllCvsRequest _, CancellationToken cancellationToken)
+    public async Task<List<Cv>?> Handle(GetAllCvsQuery _, CancellationToken cancellationToken)
         => await _cvRepository.GetAllCvsAsync(cancellationToken);
 }

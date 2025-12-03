@@ -20,31 +20,31 @@ public class CvsController : ControllerBase
 
     [HttpGet("/api/[controller]/count/favorited")]
     public async Task<IActionResult> GetFavoritedCvCountAsync(CancellationToken cancellationToken)
-        => await GetResponse<GetFavoritedCvCountRequest, int?>(new(), cancellationToken) is int count
+        => await GetResponse<GetFavoritedCvCountQuery, int?>(new(), cancellationToken) is int count
             ? Ok(count)
             : NotFound();
 
     [HttpGet("/api/[controller]/count/updated-since/{since}")]
     public async Task<IActionResult> GetCvsUpdatedSince(Instant since, CancellationToken cancellationToken)
-        => await GetResponse<GetCvsUpdatedSinceRequest, List<Cv>?>(new(since), cancellationToken) is List<Cv?> cvs
+        => await GetResponse<GetCvsUpdatedSinceQuery, List<Cv>?>(new(since), cancellationToken) is List<Cv?> cvs
             ? Ok(cvs)
             : NotFound();
 
     [HttpGet("/api/[controller]/count/total")]
     public async Task<IActionResult> GetTotalCvCountAsync(CancellationToken cancellationToken)
-        => await GetResponse<GetTotalCvCountRequest, int?>(new(), cancellationToken) is int count
+        => await GetResponse<GetTotalCvCountQuery, int?>(new(), cancellationToken) is int count
             ? Ok(count)
             : NotFound();
 
     [HttpGet("/api/[controller]/all")]
     public async Task<IActionResult> GetAllCvs(CancellationToken cancellationToken)
-        => await GetResponse<GetAllCvsRequest, List<Cv>?>(new(), cancellationToken) is List<Cv> cvs
+        => await GetResponse<GetAllCvsQuery, List<Cv>?>(new(), cancellationToken) is List<Cv> cvs
             ? Ok(cvs.Select(cv => cv.ToDto()))
             : NotFound();
 
     [HttpPut("/api/[controller]/togglefavorited/{externalId}")]
     public async Task<IActionResult> ToggleCvIsFavorited(Guid externalId, CancellationToken cancellationToken)
-        => await GetResponse<ToggleCvIsFavoritedRequest, bool?>(new(externalId), cancellationToken) is bool isFavoritedAfterToggle
+        => await GetResponse<ToggleCvIsFavoritedCommand, bool?>(new(externalId), cancellationToken) is bool isFavoritedAfterToggle
             ? Ok(isFavoritedAfterToggle)
             : NotFound();
 
