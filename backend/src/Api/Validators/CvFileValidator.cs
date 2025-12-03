@@ -13,7 +13,6 @@ public class CvFileValidator
         {
             null => CreateProblemDetails("File is missing"),
             IFormFile { Length: 0 } => CreateProblemDetails("File is empty"),
-            IFormFile { FileName: not Constants.FileName } => CreateProblemDetails($"Name '{file.FileName}' was not expected. Expected: '{Constants.FileName}'"),
             IFormFile { ContentType: not Constants.FileContentType } formFile => CreateProblemDetails($"Content type {formFile.ContentType} was not expected. Expected: '{Constants.FileContentType}'"),
 
             _ => null
