@@ -40,7 +40,9 @@ public class UploadController : ControllerBase
 
         var success = await _mediator.Send(new AddCvFromFileCommand(stream), cancellationToken);
 
-        return Results.Ok(); // TODO: return proper thing
+        return success
+            ? Results.Accepted()
+            : Results.UnprocessableEntity();
     }
 
     private async Task<TResponse> GetResponse<TRequest, TResponse>(TRequest request, CancellationToken cancellationToken)
