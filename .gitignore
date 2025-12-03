@@ -1,6 +1,2 @@
 .vs/
 *.user
-*.suo// filepath: c:\git\CvViewer\.gitignore
-.vs/
-*.user
-*.suo
