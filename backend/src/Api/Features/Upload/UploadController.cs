@@ -27,14 +27,16 @@ public class UploadController : ControllerBase
             : Results.NotFound();
 
     [HttpPost("/api/[controller]")]
-    public async Task<IResult> AddCvFromFileAsync(IFormFile cvFile, CancellationToken cancellationToken)
+    public async Task<IResult> AddCvFromFileAsync(CancellationToken cancellationToken)
     {
-        if (!CvFileValidator.TryValidate(cvFile, out var problemDetails))
+        var file = Request.Form.Files.FirstOrDefault();
+
+        if (!CvFileValidator.TryValidate(file, out var problemDetails))
         {
             return Results.Problem(problemDetails);
         }
 
-        await using var stream = cvFile.OpenReadStream();
+        await using var stream = file!.OpenReadStream();
 
         var success = await _mediator.Send(new AddCvFromFileCommand(stream), cancellationToken);
 
